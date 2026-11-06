@@ -1,0 +1,14 @@
+# Git range les fichiers texte avec des fins de ligne LF et les adapte à l'extraction.
+* text=auto eol=lf
+
+# AutoHotkey et PowerShell (Windows) : fins de ligne CRLF dans le dossier de travail.
+# Leur BOM UTF-8 fait partie du contenu : Git le conserve tel quel.
+*.ahk  text eol=crlf
+*.ps1  text eol=crlf
+*.psd1 text eol=crlf
+
+# Fichiers binaires : jamais modifiés.
+*.png  binary
+*.ico  binary
+*.exe  binary
+*.zip  binary

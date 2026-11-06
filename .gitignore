@@ -1,0 +1,14 @@
+# Fabrication (outils/compiler.ps1) et outils téléchargés
+dist/
+outils/.cache/
+
+# Raccourcis personnels
+*.lnk
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Éditeurs (seules les extensions conseillées sont partagées)
+.vscode/*
+!.vscode/extensions.json
