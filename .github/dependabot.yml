@@ -1,0 +1,9 @@
+# Garde à jour les actions GitHub utilisées par les workflows (figées par empreinte de commit).
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci

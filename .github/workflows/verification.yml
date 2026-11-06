@@ -1,0 +1,69 @@
+# Vérifie chaque envoi et chaque demande de fusion.
+name: Vérification
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  script:
+    name: Script et fabrication
+    runs-on: windows-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Vérifier le script, l'encodage et la version
+        run: ./outils/verifier.ps1
+
+      - name: Relire les scripts PowerShell (PSScriptAnalyzer)
+        run: |
+          Install-Module -Name PSScriptAnalyzer -RequiredVersion 1.25.0 -Scope CurrentUser -Force
+          $resultats = Invoke-ScriptAnalyzer -Path . -Recurse -Settings ./PSScriptAnalyzerSettings.psd1
+          $resultats | Format-Table -AutoSize -Wrap
+          if ($resultats) { exit 1 }
+
+      - name: Fabriquer TurboX.exe
+        run: ./outils/compiler.ps1
+
+      - name: Garder l'exe de test 7 jours
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: TurboX-${{ github.sha }}
+          path: dist/TurboX.exe
+          retention-days: 7
+
+  documents:
+    name: Documents et workflows
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Relire les documents (markdownlint)
+        run: npx --yes markdownlint-cli2@0.24.0
+
+      - name: Relire les workflows (actionlint)
+        run: |
+          curl -sSfL -o actionlint.tar.gz https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz
+          echo "8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8  actionlint.tar.gz" | sha256sum --check
+          tar -xzf actionlint.tar.gz actionlint
+          ./actionlint -color
