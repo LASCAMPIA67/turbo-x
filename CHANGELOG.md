@@ -6,7 +6,7 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), et le p
 
 ## [Non publié]
 
-## [0.2.0] - 2026-11-06
+## [0.2.0] - 2026-11-07
 
 ### Ajouté
 
