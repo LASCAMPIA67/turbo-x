@@ -1,0 +1,62 @@
+name: Signaler un problème
+description: Quelque chose ne marche pas comme prévu.
+title: "[Problème] "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de prendre le temps de signaler un problème !
+        Avant d'envoyer, jette un œil à la partie « Dépannage » du README : la solution y est peut-être.
+        **N'écris aucune information personnelle** : adresse IP, nom de ta console, chemins de ton PC, identifiants…
+  - type: input
+    id: version
+    attributes:
+      label: Version de Turbo X
+      description: Elle est écrite en haut du panneau, à côté de « TURBO X ».
+      placeholder: v0.2.0
+    validations:
+      required: true
+  - type: dropdown
+    id: forme
+    attributes:
+      label: Tu utilises…
+      options:
+        - TurboX.exe (téléchargé dans les publications)
+        - TurboX.ahk (avec AutoHotkey installé)
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Version de Windows
+      placeholder: Windows 11 24H2
+    validations:
+      required: true
+  - type: input
+    id: chiaki
+    attributes:
+      label: Version de chiaki-ng
+      placeholder: "1.9.9"
+  - type: textarea
+    id: probleme
+    attributes:
+      label: Que se passe-t-il ?
+      description: Ce que tu vois, et ce que tu attendais à la place.
+    validations:
+      required: true
+  - type: textarea
+    id: etapes
+    attributes:
+      label: Comment le refaire ?
+      description: Les étapes, dans l'ordre, pour voir le problème.
+      placeholder: |
+        1. Lancer Turbo X
+        2. …
+    validations:
+      required: true
+  - type: textarea
+    id: captures
+    attributes:
+      label: Captures d'écran (facultatif)
+      description: Une capture du panneau ou de l'assistant aide beaucoup. Cache ce qui est personnel.
