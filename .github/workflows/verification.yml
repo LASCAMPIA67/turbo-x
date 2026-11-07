@@ -41,11 +41,13 @@ jobs:
       - name: Fabriquer TurboX.exe
         run: ./outils/compiler.ps1
 
-      - name: Garder l'exe de test 7 jours
+      - name: Garder l'exe et le guide de test 7 jours
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: TurboX-${{ github.sha }}
-          path: dist/TurboX.exe
+          path: |
+            dist/TurboX.exe
+            dist/LISEZ-MOI.html
           retention-days: 7
 
   documents:

@@ -15,6 +15,7 @@
 ;    Menu : bouton ☰ du panneau, clic droit sur le panneau,
 ;    ou icône près de l'horloge (son contour prend la couleur de l'état).
 ;    Couleurs : bouton palette du panneau, juste à gauche de ☰.
+;    Guide complet : menu › Guide d'utilisation (LISEZ-MOI.html, à côté de TurboX.exe).
 ;
 ;    Au tout premier lancement, une visite guidée présente Turbo X en une minute
 ;    (elle reste dans le menu). Ensuite, l'assistant s'ouvre sur l'écran du jeu
@@ -22,8 +23,8 @@
 ;
 ;    Sécurité : rien n'est envoyé tant que la fenêtre chiaki-ng
 ;    n'est pas au premier plan et connectée à la PS5.
-;    Mémoire : la cadence, le coin, l'écran du panneau, les sons
-;    et les couleurs sont retenus d'une fois sur l'autre.
+;    Mémoire : la cadence, le coin, l'écran du panneau, les sons, la vérification
+;    de la PS5 et les couleurs sont retenus d'une fois sur l'autre.
 ; ══════════════════════════════════════════════════════════════════════
 
 #Requires AutoHotkey v2.0
@@ -42,11 +43,11 @@ DllCall("gdiplus\GdiplusStartup", "Ptr*", &jetonGdip, "Ptr", entreeGdip, "Ptr", 
 
 ;@Ahk2Exe-SetName Turbo X
 ;@Ahk2Exe-SetDescription Turbo X
-;@Ahk2Exe-SetVersion 0.4.0
+;@Ahk2Exe-SetVersion 1.0.0
 ;@Ahk2Exe-SetCopyright Licence MIT
 ;@Ahk2Exe-SetOrigFilename TurboX.exe
 ;@Ahk2Exe-SetMainIcon TurboX.ico
-VERSION := "0.4.0"   ; à changer en même temps que la ligne « SetVersion » juste au-dessus
+VERSION := "1.0.0"   ; à changer en même temps que la ligne « SetVersion » juste au-dessus
 
 ; ─────────────────────────────── RÉGLAGES ───────────────────────────────
 TOUCHE         := "Enter"   ; touche du clavier qui fait X dans chiaki-ng
@@ -56,8 +57,8 @@ CADENCE_MAX    := 1000      ; le plus lent autorisé (1 appui par seconde)
 PAS_MS         := 50        ; ce que change chaque appui sur F9 / F10
 APPUI_MS       := 60        ; durée de chaque appui
 CIBLE          := "chiaki"  ; nom du programme dans lequel appuyer
-VERIF_PS5      := true      ; n'appuyer que si chiaki-ng est connecté à la PS5 (false si tu joues par Internet)
-SONS           := true      ; petits bips au démarrage et à l'arrêt (false = muet)
+VERIF_PS5      := true      ; n'appuyer que si chiaki-ng est connecté à la PS5 (false si tu joues par Internet ; aussi dans le menu)
+SONS           := true      ; petits bips au démarrage et à l'arrêt (false = muet ; aussi dans le menu)
 COIN           := 1         ; panneau : 1 haut-gauche, 2 haut-droite, 3 bas-droite, 4 bas-gauche
 ECRAN          := 0         ; panneau : 0 = sur l'écran de chiaki-ng, 1 = écran le plus à gauche, 2 = le suivant…
 OUVRIR_CHIAKI  := true      ; ouvrir chiaki-ng tout seul au lancement de Turbo X
@@ -175,16 +176,17 @@ cadreActuel    := ""      ; où le cadre est dessiné en ce moment (pendant son 
 cadreAnim      := {}      ; son animation : d'où, vers où, depuis quand, en fondu ou non
 
 ; ─────────────────────────────── MÉMOIRE ───────────────────────────────
-; La cadence, le coin, l'écran, les sons et les couleurs sont retenus d'une fois sur l'autre.
+; La cadence, le coin, l'écran, les sons, la vérification de la PS5 et les couleurs sont retenus d'une fois sur l'autre.
 ; Si tu modifies un de ces réglages en haut du fichier, c'est ta modification qui gagne.
 MEMOIRE := A_AppData "\Turbo X\memoire.ini"
 ReprendreAncienneMemoire()
-ORIGINE    := Map("cadence", CADENCE_MS, "coin", COIN, "ecran", ECRAN, "sons", SONS
+ORIGINE    := Map("cadence", CADENCE_MS, "coin", COIN, "ecran", ECRAN, "sons", SONS, "verif_ps5", VERIF_PS5
                 , "ambiance", AMBIANCE, "accent", ACCENT, "etats", ETATS)
 CADENCE_MS := Souvenir("cadence", CADENCE_MIN, CADENCE_MAX)
 COIN       := Souvenir("coin", 1, 4)
 ECRAN      := Souvenir("ecran", 0, 9)
 SONS       := Souvenir("sons", 0, 1)
+VERIF_PS5  := Souvenir("verif_ps5", 0, 1)
 AMBIANCE   := SouvenirCouleur("ambiance", AMBIANCES)
 ACCENT     := SouvenirCouleur("accent", ACCENTS)
 ETATS      := SouvenirCouleur("etats", JEUX_ETATS)
@@ -424,9 +426,9 @@ ETAPES_VISITE := [{titre: "Bienvenue dans Turbo X", cible: ""
     , {titre: "Deux écrans", cible: "panneau", tache: "ecran", consigne: "Appuie sur F5", ecrans: 2
         , texte: "Le panneau suit l'écran de chiaki-ng. Tu peux aussi le mettre sur l'écran de ton choix."}
     , {titre: "Le menu et les couleurs", cible: "menu", tache: "couleurs", consigne: "Clique sur la palette"
-        , texte: "Le bouton aux trois traits, ou un clic droit sur le panneau, ouvre le menu : sons, réglages, cette visite… Juste à côté, la palette change les couleurs."}
+        , texte: "Le bouton aux trois traits, ou un clic droit sur le panneau, ouvre le menu : le guide complet, les sons, cette visite… Juste à côté, la palette change les couleurs."}
     , {titre: "Tout est prêt", cible: ""
-        , texte: "Pour connecter ta PS5, l'assistant de démarrage te guide : F1 l'ouvre à tout moment. Bon jeu !"}]
+        , texte: "Pour connecter ta PS5, l'assistant de démarrage te guide : F1 l'ouvre à tout moment. Et tout est expliqué dans le guide, depuis le menu. Bon jeu !"}]
 
 visite := Gui(FENETRE, "Turbo X · visite guidée")
 visite.BackColor := C_FOND
@@ -463,6 +465,7 @@ A_TrayMenu.Delete()
 A_TrayMenu.Add("Démarrer / arrêter`tF8", Basculer)
 A_TrayMenu.Add("Assistant de démarrage`tF1", BasculerAssistant)
 A_TrayMenu.Add("Visite guidée", (*) => VisiteOuvrir())
+A_TrayMenu.Add("Guide d'utilisation", OuvrirGuide)
 A_TrayMenu.Add()
 A_TrayMenu.Add("Afficher / masquer le panneau`tF7", BasculerPanneau)
 A_TrayMenu.Add("Changer de coin`tF6", ChangerCoin)
@@ -470,13 +473,14 @@ A_TrayMenu.Add("Changer d'écran`tF5", ChangerEcran)
 A_TrayMenu.Add("Couleurs…", BasculerCouleurs)
 A_TrayMenu.Add()
 A_TrayMenu.Add("Sons", BasculerSons)
+A_TrayMenu.Add("Vérifier la connexion à la PS5", BasculerVerifPs5)
 A_TrayMenu.Add("Remettre les réglages d'origine", RemettreOrigine)
 A_TrayMenu.Add()
 A_TrayMenu.Add("Quitter`tCtrl+F8", Quitter)
 A_TrayMenu.Default := "Démarrer / arrêter`tF8"
 A_IconTip := "Turbo X"
 IconeEtat(C_ROUGE)   ; le logo de Turbo X, entouré de la couleur de l'état (arrêté au départ)
-CocherSons()
+CocherMenu()
 
 OnExit(Fermeture)
 OnMessage(0x201, Glisser)          ; clic gauche : déplacer l'assistant ou les couleurs, tenir un curseur de la palette
@@ -593,7 +597,7 @@ ChangerEcran(*) {
 BasculerSons(*) {
     global SONS
     SONS := !SONS
-    CocherSons()
+    CocherMenu()
     Retenir()
     if SONS
         Notifier(I_SON, C_ACCENT, "SONS ACTIVÉS", "Petits bips au démarrage et à l'arrêt")
@@ -602,20 +606,35 @@ BasculerSons(*) {
     Bips(660, 990)
 }
 
+BasculerVerifPs5(*) {
+    ; par Internet, chiaki-ng ne peut pas être vérifié : sans vérification, Turbo X appuie
+    ; dès que la fenêtre chiaki-ng est au premier plan
+    global VERIF_PS5
+    VERIF_PS5 := !VERIF_PS5
+    CocherMenu()
+    Retenir()
+    Rafraichir()
+    if VERIF_PS5
+        Notifier(I_MANETTE, C_ACCENT, "PS5 VÉRIFIÉE", "Turbo X n'appuie que si chiaki-ng y est connecté")
+    else
+        Notifier(I_MANETTE, C_AMBRE, "PS5 NON VÉRIFIÉE", "Turbo X appuie dès que chiaki-ng est devant")
+}
+
 RemettreOrigine(*) {
-    global CADENCE_MS, COIN, ECRAN, SONS, AMBIANCE, ACCENT, ETATS
+    global CADENCE_MS, COIN, ECRAN, SONS, VERIF_PS5, AMBIANCE, ACCENT, ETATS
     if (palette.cible != "")
         PaletteFermer(true)
     CADENCE_MS := ORIGINE["cadence"]
     COIN       := ORIGINE["coin"]
     ECRAN      := ORIGINE["ecran"]
     SONS       := ORIGINE["sons"]
+    VERIF_PS5  := ORIGINE["verif_ps5"]
     AMBIANCE   := CouleurDepart("ambiance", AMBIANCES)
     ACCENT     := CouleurDepart("accent", ACCENTS)
     ETATS      := CouleurDepart("etats", JEUX_ETATS)
     if actif
         SetTimer(Appuyer, CADENCE_MS)
-    CocherSons()
+    CocherMenu()
     AppliquerCouleurs()
     PlacerPanneau()
     Retenir()
@@ -638,6 +657,12 @@ RendreLaMain(avant) {
     actuelle := WinExist("A")
     if (avant && avant != A_ScriptHwnd && (!actuelle || actuelle = A_ScriptHwnd))
         try WinActivate(avant)
+}
+
+OuvrirGuide(*) {
+    ; le guide LISEZ-MOI.html, rangé à côté de TurboX.exe ; sinon (code source), la page du projet
+    guide := A_ScriptDir "\LISEZ-MOI.html"
+    try Run(FileExist(guide) ? guide : "https://github.com/LASCAMPIA67/turbo-x#readme")
 }
 
 Quitter(*) {
@@ -849,11 +874,13 @@ AuDessus(fenetre, sous := -1) {
     return fenetre.Hwnd
 }
 
-CocherSons() {
-    if SONS
-        A_TrayMenu.Check("Sons")
-    else
-        A_TrayMenu.Uncheck("Sons")
+CocherMenu() {
+    ; les coches du menu suivent les réglages
+    for nom, coche in Map("Sons", SONS, "Vérifier la connexion à la PS5", VERIF_PS5)
+        if coche
+            A_TrayMenu.Check(nom)
+        else
+            A_TrayMenu.Uncheck(nom)
 }
 
 Ligne(nom) {
@@ -2500,7 +2527,7 @@ SouvenirCouleur(cle, liste) {
 }
 
 Retenir() {
-    for cle, valeur in Map("cadence", CADENCE_MS, "coin", COIN, "ecran", ECRAN, "sons", SONS
+    for cle, valeur in Map("cadence", CADENCE_MS, "coin", COIN, "ecran", ECRAN, "sons", SONS, "verif_ps5", VERIF_PS5
                          , "ambiance", AMBIANCE, "accent", ACCENT, "etats", ETATS) {
         Noter(cle, valeur)
         Noter(cle "_origine", ORIGINE[cle])
