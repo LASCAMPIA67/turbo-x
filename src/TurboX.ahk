@@ -120,6 +120,11 @@ L_ASSIST := 400   ; largeur du contenu de l'assistant
 L_COUL   := 292   ; largeur du contenu de la fenêtre des couleurs
 L_VISITE := 300   ; largeur du contenu de la bulle de la visite guidée
 
+; Style des fenêtres de Turbo X : toujours au-dessus, sans barre de titre ; jamais activées
+; (+E0x08000000 : elles ne prennent jamais le clavier à chiaki-ng) ; dessinées d'abord en
+; coulisse puis affichées d'un coup (+E0x02000000 : rien ne scintille quand elles changent)
+FENETRE := "+AlwaysOnTop -Caption +ToolWindow +E0x08000000 +E0x02000000"
+
 ; ─────────────────────────────── ÉTAT ───────────────────────────────
 actif          := false
 nbAppuis       := 0
@@ -162,7 +167,9 @@ vDepart        := {}      ; les réglages au début de l'étape (pour voir si la
 vFait          := false   ; la tâche de l'étape est-elle faite ?
 vVuMasque      := false   ; le panneau a-t-il été masqué pendant l'étape « F7 » ?
 vAssistant     := false   ; rouvrir l'assistant de démarrage à la fin de la visite ?
-cadreZone      := ""      ; zone entourée par le cadre lumineux de la visite
+cadreZone      := ""      ; zone entourée par le cadre lumineux de la visite (et sa couleur)
+cadreActuel    := ""      ; où le cadre est dessiné en ce moment (pendant son glissement aussi)
+cadreAnim      := {}      ; son animation : d'où, vers où, depuis quand, en fondu ou non
 
 ; ─────────────────────────────── MÉMOIRE ───────────────────────────────
 ; La cadence, le coin, l'écran, les sons et les couleurs sont retenus d'une fois sur l'autre.
@@ -194,7 +201,7 @@ for fenetre in WinGetList("ahk_class AutoHotkey") {
 }
 
 ; ─────────────────────────────── PANNEAU ───────────────────────────────
-pan := Gui("+AlwaysOnTop -Caption +ToolWindow +E0x08000000", "Turbo X")
+pan := Gui(FENETRE, "Turbo X")
 pan.BackColor := C_FOND
 pan.MarginX := 24
 pan.MarginY := 20
@@ -249,7 +256,7 @@ PlacerPanneau()
 pan.Show("NoActivate")
 
 ; ─────────────────────────────── NOTIFICATION ───────────────────────────────
-notif := Gui("+AlwaysOnTop -Caption +ToolWindow +E0x08000000", "Turbo X · notification")
+notif := Gui(FENETRE, "Turbo X · notification")
 notif.BackColor := C_FOND
 notif.MarginX := 22
 notif.MarginY := 16
@@ -265,7 +272,7 @@ DwmArrondi(notif)
 ; ─────────────────────────────── ASSISTANT DE DÉMARRAGE ───────────────────────────────
 ; Une liste qui se coche toute seule. Comme le panneau, elle ne prend jamais le clavier
 ; à chiaki-ng, même quand on clique sur ses boutons. On la déplace en la tenant par le fond.
-asst := Gui("+AlwaysOnTop -Caption +ToolWindow +E0x08000000", "Turbo X · assistant")
+asst := Gui(FENETRE, "Turbo X · assistant")
 asst.BackColor := C_FOND
 asst.MarginX := 28
 asst.MarginY := 24
@@ -323,7 +330,7 @@ aPiste.GetPos(&jaugeX,, &jaugeL)
 ; Le bouton palette du panneau l'ouvre, à côté du panneau. Un clic sur une pastille change les
 ; couleurs tout de suite ; la dernière pastille d'une ligne ouvre la palette complète, où trois
 ; curseurs donnent n'importe quelle couleur. Comme le panneau, elle ne prend jamais le clavier.
-coul := Gui("+AlwaysOnTop -Caption +ToolWindow +E0x08000000", "Turbo X · couleurs")
+coul := Gui(FENETRE, "Turbo X · couleurs")
 coul.BackColor := C_FOND
 coul.MarginX := 24
 coul.MarginY := 20
@@ -418,7 +425,7 @@ ETAPES_VISITE := [{titre: "Bienvenue dans Turbo X", cible: ""
     , {titre: "Tout est prêt", cible: ""
         , texte: "Pour connecter ta PS5, l'assistant de démarrage te guide : F1 l'ouvre à tout moment. Bon jeu !"}]
 
-visite := Gui("+AlwaysOnTop -Caption +ToolWindow +E0x08000000", "Turbo X · visite guidée")
+visite := Gui(FENETRE, "Turbo X · visite guidée")
 visite.BackColor := C_FOND
 visite.MarginX := 26
 visite.MarginY := 22
@@ -681,14 +688,14 @@ Rafraichir(*) {
     chiaki := devant ? 2 : (ouvert ? 1 : 0)
     if (chiaki != dernierChiaki) {
         dernierChiaki := chiaki
-        txChiaki.SetFont("c" CouleurChiaki())
+        Peindre(txChiaki, CouleurChiaki())
         txChiaki.Value := chiaki = 2 ? "au premier plan" : chiaki = 1 ? "en arrière-plan" : "fermé"
     }
 
     codePs5 := connecte ? 2 : !VERIF_PS5 ? 3 : ouvert ? 1 : 0
     if (codePs5 != dernierPS5) {
         dernierPS5 := codePs5
-        txPS5.SetFont("c" CouleurPs5())
+        Peindre(txPS5, CouleurPs5())
         txPS5.Value := codePs5 = 2 ? "connectée" : codePs5 = 3 ? "non vérifiée" : "pas connectée"
     }
 
@@ -713,17 +720,13 @@ Rafraichir(*) {
     if visiteVisible
         VisiteMaj()
 
-    ; garde les fenêtres de Turbo X au-dessus de tout, sans voler le clavier à chiaki-ng
-    if visible
-        AuDessus(pan)
-    if asstVisible
-        AuDessus(asst)
-    if coulVisible
-        AuDessus(coul)
-    if visiteVisible
-        AuDessus(visite)
-    if (visiteVisible && cadreZone != "")
-        AuDessus(cadre)
+    ; garde les fenêtres de Turbo X au-dessus de tout, sans voler le clavier à chiaki-ng.
+    ; Chacune est glissée juste sous la précédente : leur ordre ne change jamais, rien ne clignote.
+    dessus := -1
+    for f in [[visiteVisible && cadreZone != "", cadre], [visiteVisible, visite], [coulVisible, coul]
+            , [asstVisible, asst], [visible, pan]]
+        if f[1]
+            dessus := AuDessus(f[2], dessus)
 }
 
 Survol() {
@@ -759,18 +762,19 @@ CouleurChiaki() => dernierChiaki = 2 ? C_VERT : dernierChiaki = 1 ? C_AMBRE : C_
 CouleurPs5() => dernierPS5 = 2 ? C_VERT : dernierPS5 = 3 ? C_DOUX : dernierPS5 = 1 ? C_AMBRE : C_ROUGE
 
 AfficherEtat(couleur, icone, titre) {
-    icEtat.SetFont("c" couleur)
-    icEtat.Value := icone
-    txEtat.SetFont("c" couleur)
-    txEtat.Value := titre
-    barre.Opt("Background" couleur)
-    barre.Redraw()
+    ; (chaque élément n'est redessiné que s'il change : pas de clignotement)
+    Peindre(icEtat, couleur)
+    Maj(icEtat, icone)
+    Peindre(txEtat, couleur)
+    Maj(txEtat, titre)
+    Fond(barre, couleur)
     DwmBordure(pan, couleur)
-    A_IconTip := "Turbo X  ·  " titre
+    if (A_IconTip != "Turbo X  ·  " titre)
+        A_IconTip := "Turbo X  ·  " titre
 }
 
 AllumerVoyant(allume) {
-    voyant.SetFont("c" . (allume ? C_VERT : C_SOMBRE))
+    Peindre(voyant, allume ? C_VERT : C_SOMBRE)
 }
 
 Notifier(icone, couleur, titre, sousTitre) {
@@ -810,9 +814,10 @@ Recaler() {
         VisiteMaj()
 }
 
-AuDessus(fenetre) {
-    ; remet la fenêtre au-dessus de tout, sans l'activer
-    DllCall("SetWindowPos", "Ptr", fenetre.Hwnd, "Ptr", -1, "Int", 0, "Int", 0, "Int", 0, "Int", 0, "UInt", 0x13)
+AuDessus(fenetre, sous := -1) {
+    ; place la fenêtre juste sous une autre (-1 : au-dessus de tout), sans l'activer ; renvoie sa poignée
+    DllCall("SetWindowPos", "Ptr", fenetre.Hwnd, "Ptr", sous, "Int", 0, "Int", 0, "Int", 0, "Int", 0, "UInt", 0x13)
+    return fenetre.Hwnd
 }
 
 CocherSons() {
@@ -1450,8 +1455,9 @@ PaletteCode(*) {
 }
 
 AppliquerCouleurs(*) {
-    ; repeint les fenêtres avec les couleurs choisies (seulement ce qui a changé)
-    global derniereTeinte, cadreZone
+    ; repeint les fenêtres avec les couleurs choisies. Seul ce qui a changé est redessiné :
+    ; pendant qu'on fait glisser un curseur de la palette, rien d'autre ne bouge.
+    global derniereTeinte
     static fondAvant := ""
     derniereTeinte := A_TickCount
     CalculerCouleurs()
@@ -1463,17 +1469,15 @@ AppliquerCouleurs(*) {
     for e in teintes
         Repeindre(e)
     ; ce qui change de couleur selon l'état ou la souris
-    peints.Clear(), fonds.Clear()
-    cadreZone := ""
     PeindreEtat()
-    txChiaki.SetFont("c" CouleurChiaki())
-    txPS5.SetFont("c" CouleurPs5())
+    Peindre(txChiaki, CouleurChiaki())
+    Peindre(txPS5, CouleurPs5())
     AllumerVoyant(false)
     for fenetre in [asst, coul, visite]
         DwmBordure(fenetre, C_LIGNE)
     for i, p in pastilles
         DessinerPastille(p, i = pastilleSurvol)
-    if (palette.cible != "")
+    if (palette.cible != "" && nouveauFond)   ; le fond des curseurs
         PaletteDessiner()
     CouleursNoms()
     Survol()
@@ -1683,11 +1687,10 @@ VisiteBouton(n) {
 
 VisiteFermer() {
     ; fin de la visite (ou visite passée) : elle ne s'ouvrira plus toute seule
-    global visiteVisible, cadreZone
+    global visiteVisible
     visiteVisible := false
     visite.Hide()
-    cadre.Hide()
-    cadreZone := ""
+    CadreCacher()
     Noter("visite_vue", 1)
     if vAssistant
         AssistantAfficher()
@@ -1786,32 +1789,60 @@ VisiteZone(nom) {
 }
 
 VisiteCadre(e) {
-    ; le cadre lumineux entoure ce que montre l'étape ; il n'est redessiné que si ça a bougé
-    global cadreZone
+    ; le cadre lumineux entoure ce que montre l'étape : il apparaît en fondu, puis glisse en douceur
+    ; d'une zone à l'autre. Il n'est redessiné que si la zone ou la couleur d'accent a changé.
+    global cadreZone, cadreAnim
     z := e.cible != "" ? VisiteZone(e.cible) : ""
-    cle := z ? z.x " " z.y " " z.l " " z.h : ""
+    cle := z ? z.x " " z.y " " z.l " " z.h " " C_ACCENT : ""
     if (cle = cadreZone)
         return
     cadreZone := cle
     if !z
-        return cadre.Hide()
-    if !DllCall("IsWindowVisible", "Ptr", cadre.Hwnd)
+        return CadreCacher()
+    if (cadreActuel = "") {
+        cadreAnim := {de: z, vers: z, debut: A_TickCount, fondu: true}
         cadre.Show("NoActivate")
-    DessinerCadre(z)
+    } else if (cadreActuel.x = z.x && cadreActuel.y = z.y && cadreActuel.l = z.l && cadreActuel.h = z.h) {
+        return DessinerCadre(z)        ; même place : seule la couleur a changé
+    } else
+        cadreAnim := {de: cadreActuel, vers: z, debut: A_TickCount, fondu: false}
+    CadreAnimer()
+    SetTimer(CadreAnimer, 15)
 }
 
-DessinerCadre(z) {
+CadreAnimer() {
+    ; une image de l'animation du cadre : elle dure 0,22 s et ralentit en arrivant
+    avance := Min(1, (A_TickCount - cadreAnim.debut) / 220)
+    doux := 1 - (1 - avance) ** 3
+    z := {}
+    for cle in ["x", "y", "l", "h", "rayon"]
+        z.%cle% := cadreAnim.de.%cle% + (cadreAnim.vers.%cle% - cadreAnim.de.%cle%) * doux
+    DessinerCadre(z, cadreAnim.fondu ? doux : 1)
+    if (avance >= 1)
+        SetTimer(CadreAnimer, 0)
+}
+
+CadreCacher() {
+    global cadreZone, cadreActuel
+    SetTimer(CadreAnimer, 0)
+    cadre.Hide()
+    cadreZone := "", cadreActuel := ""
+}
+
+DessinerCadre(z, opacite := 1) {
     ; un trait aux coins arrondis, avec un halo doux, un peu à l'écart de la zone
+    global cadreActuel
+    cadreActuel := z
     k := A_ScreenDPI / 96
     halo := Round(10 * k), bord := halo + Round(6 * k)
-    l := z.l + 2 * bord, h := z.h + 2 * bord
+    l := Round(z.l) + 2 * bord, h := Round(z.h) + 2 * bord
     t := Toile(l, h)
     t.Effacer(0)
     rayon := (z.rayon + 6) * k
     for trait in [[9, 0x12], [6, 0x24], [3.5, 0x40]]
         t.Contour(halo, halo, l - 2 * halo, h - 2 * halo, rayon, trait[1] * k, Argb(C_ACCENT, trait[2]))
     t.Contour(halo, halo, l - 2 * halo, h - 2 * halo, rayon, 2 * k, Argb(C_ACCENT))
-    t.Calque(cadre, z.x - bord, z.y - bord)
+    t.Calque(cadre, Round(z.x) - bord, Round(z.y) - bord, Round(255 * opacite))
 }
 
 ; ─────────────────────────────── DESSIN ───────────────────────────────
@@ -1897,8 +1928,9 @@ class Toile {
         ctrl.Value := "HBITMAP:" hbm
     }
 
-    Calque(fenetre, x, y) {
-        ; affiche le dessin, avec sa transparence, dans une fenêtre « calque » placée en (x, y)
+    Calque(fenetre, x, y, opacite := 255) {
+        ; affiche le dessin, avec sa transparence, dans une fenêtre « calque » placée en (x, y) ;
+        ; opacite : de 0 (invisible) à 255 (tout à fait visible)
         hbm := 0
         DllCall("gdiplus\GdipCreateHBITMAPFromBitmap", "Ptr", this.bmp, "Ptr*", &hbm, "UInt", 0)
         hdc := DllCall("CreateCompatibleDC", "Ptr", 0, "Ptr")
@@ -1907,7 +1939,7 @@ class Toile {
         NumPut("Int", x, "Int", y, pos)
         NumPut("Int", this.l, "Int", this.h, taille)
         DllCall("UpdateLayeredWindow", "Ptr", fenetre.Hwnd, "Ptr", 0, "Ptr", pos, "Ptr", taille, "Ptr", hdc
-            , "Ptr", origine, "UInt", 0, "UInt*", 0x01FF0000, "UInt", 2)   ; transparence de chaque point
+            , "Ptr", origine, "UInt", 0, "UInt*", 0x01000000 | (opacite << 16), "UInt", 2)   ; transparence de chaque point
         DllCall("SelectObject", "Ptr", hdc, "Ptr", ancien)
         DllCall("DeleteDC", "Ptr", hdc)
         DllCall("DeleteObject", "Ptr", hbm)
@@ -2411,7 +2443,11 @@ DwmArrondi(fenetre) {
 }
 
 DwmBordure(fenetre, couleur) {
-    ; bordure de la couleur choisie (Windows 11)
+    ; bordure de la couleur choisie (Windows 11), changée seulement si elle est différente
+    static bordures := Map()
+    if (bordures.Get(fenetre.Hwnd, "") = couleur)
+        return
+    bordures[fenetre.Hwnd] := couleur
     try DllCall("dwmapi\DwmSetWindowAttribute", "Ptr", fenetre.Hwnd, "UInt", 34, "UInt*", BGR(couleur), "UInt", 4)
 }
 
