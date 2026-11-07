@@ -9,6 +9,7 @@ outils/.cache/
 Thumbs.db
 desktop.ini
 
-# Éditeurs (seules les extensions conseillées sont partagées)
+# Éditeurs (seuls les extensions conseillées et les réglages du projet sont partagés)
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json

@@ -1,0 +1,8 @@
+// Réglages de Visual Studio Code pour ce projet (ils passent avant les réglages personnels)
+{
+  // Pas de mise en forme automatique : les extensions AutoHotkey défont les alignements
+  // et peuvent effacer des commentaires. .editorconfig s'occupe déjà de l'encodage et des fins de ligne.
+  "editor.formatOnSave": false,
+  "editor.formatOnPaste": false,
+  "editor.formatOnType": false
+}

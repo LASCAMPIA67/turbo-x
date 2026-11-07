@@ -6,6 +6,18 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), et le p
 
 ## [Non publié]
 
+## [0.4.0] - 2026-11-07
+
+### Ajouté
+
+- L'icône de Turbo X : un X ivoire suivi de ses échos, comme des appuis en rafale, sur un carré graphite. Elle est sur `TurboX.exe` et près de l'horloge, dessinée à part pour chaque taille (de 16 à 256 pixels) pour rester nette.
+- Près de l'horloge, le contour de l'icône prend la couleur de l'état : vert, ambre ou rouge (ou les couleurs choisies dans la palette). On voit d'un coup d'œil où en est Turbo X, même panneau masqué.
+- `outils/icone.ps1` dessine l'icône ; la vérification automatique s'assure qu'elle est à jour.
+
+### Modifié
+
+- Visual Studio Code ne remet plus en forme tout seul les fichiers du projet : sa mise en forme automatique défaisait les alignements du script et pouvait effacer des commentaires.
+
 ## [0.3.0] - 2026-11-07
 
 ### Ajouté
@@ -61,6 +73,7 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), et le p
 
 Première version, sous le nom « Spam X », jamais publiée : appuis automatiques sur Entrée dans chiaki-ng, panneau toujours visible, notifications, sons, raccourcis <kbd>F6</kbd> à <kbd>F10</kbd> et <kbd>Ctrl</kbd> + <kbd>F8</kbd>.
 
-[Non publié]: https://github.com/LASCAMPIA67/turbo-x/compare/v0.3.0...HEAD
+[Non publié]: https://github.com/LASCAMPIA67/turbo-x/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/LASCAMPIA67/turbo-x/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/LASCAMPIA67/turbo-x/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/LASCAMPIA67/turbo-x/releases/tag/v0.2.0

@@ -13,7 +13,7 @@
 ;    Ctrl + F8   quitter
 ;
 ;    Menu : bouton ☰ du panneau, clic droit sur le panneau,
-;    ou icône près de l'horloge.
+;    ou icône près de l'horloge (son contour prend la couleur de l'état).
 ;    Couleurs : bouton palette du panneau, juste à gauche de ☰.
 ;
 ;    Au tout premier lancement, une visite guidée présente Turbo X en une minute
@@ -42,10 +42,11 @@ DllCall("gdiplus\GdiplusStartup", "Ptr*", &jetonGdip, "Ptr", entreeGdip, "Ptr", 
 
 ;@Ahk2Exe-SetName Turbo X
 ;@Ahk2Exe-SetDescription Turbo X
-;@Ahk2Exe-SetVersion 0.3.0
+;@Ahk2Exe-SetVersion 0.4.0
 ;@Ahk2Exe-SetCopyright Licence MIT
 ;@Ahk2Exe-SetOrigFilename TurboX.exe
-VERSION := "0.3.0"   ; à changer en même temps que la ligne « SetVersion » juste au-dessus
+;@Ahk2Exe-SetMainIcon TurboX.ico
+VERSION := "0.4.0"   ; à changer en même temps que la ligne « SetVersion » juste au-dessus
 
 ; ─────────────────────────────── RÉGLAGES ───────────────────────────────
 TOUCHE         := "Enter"   ; touche du clavier qui fait X dans chiaki-ng
@@ -474,6 +475,7 @@ A_TrayMenu.Add()
 A_TrayMenu.Add("Quitter`tCtrl+F8", Quitter)
 A_TrayMenu.Default := "Démarrer / arrêter`tF8"
 A_IconTip := "Turbo X"
+IconeEtat(C_ROUGE)   ; le logo de Turbo X, entouré de la couleur de l'état (arrêté au départ)
 CocherSons()
 
 OnExit(Fermeture)
@@ -774,10 +776,34 @@ AfficherEtat(couleur, icone, titre) {
     DwmBordure(pan, couleur)
     if (A_IconTip != "Turbo X  ·  " titre)
         A_IconTip := "Turbo X  ·  " titre
+    IconeEtat(couleur)
 }
 
 AllumerVoyant(allume) {
     Peindre(voyant, allume ? C_VERT : C_SOMBRE)
+}
+
+IconeEtat(couleur) {
+    ; l'icône près de l'horloge : le logo de Turbo X (celui de TurboX.exe), entouré de la couleur
+    ; de l'état, comme le bord du panneau ; redessinée seulement quand la couleur change
+    static source := A_IsCompiled ? A_ScriptFullPath : A_ScriptDir "\TurboX.ico"
+    static t := DllCall("GetSystemMetrics", "Int", 49)   ; taille des petites icônes : 16 pixels à 100 %, 24 à 150 %
+    static logo := 0, derniere := ""
+    if (couleur = derniere)
+        return
+    if !logo
+        try logo := LoadPicture(source, "w" t " h" t, &genre)
+    if !logo   ; script copié sans TurboX.ico à côté : l'icône d'AutoHotkey reste
+        return
+    derniere := couleur
+    dessin := Toile(t, t)
+    dessin.Icone(logo)
+    trait := Max(2, Round(t / 12))
+    bord := trait / 2 - 0.5   ; (GDI+ place le centre des pixels sur les nombres entiers)
+    dessin.Contour(bord, bord, t - trait, t - trait, 0.23 * t + 0.5 - trait / 2, trait, Argb(couleur))
+    icone := dessin.EnIcone()
+    TraySetIcon("HICON:*" icone)   ; « * » : AutoHotkey en garde une copie, l'original est détruit ici
+    DllCall("DestroyIcon", "Ptr", icone)
 }
 
 Notifier(icone, couleur, titre, sousTitre) {
@@ -1864,8 +1890,8 @@ DessinerCadre(z, opacite := 1) {
 }
 
 ; ─────────────────────────────── DESSIN ───────────────────────────────
-; Les pastilles, les curseurs de la palette et le cadre de la visite sont dessinés avec GDI+,
-; la bibliothèque de dessin de Windows, pour avoir des bords bien lisses.
+; Les pastilles, les curseurs de la palette, le cadre de la visite et l'icône près de l'horloge
+; sont dessinés avec GDI+, la bibliothèque de dessin de Windows, pour avoir des bords bien lisses.
 class Toile {
     __New(l, h) {
         ; une image vide de l × h pixels, où l'on dessine
@@ -1937,6 +1963,61 @@ class Toile {
         DllCall("gdiplus\GdipDrawPath", "Ptr", this.g, "Ptr", stylo, "Ptr", chemin)
         DllCall("gdiplus\GdipDeletePen", "Ptr", stylo)
         DllCall("gdiplus\GdipDeletePath", "Ptr", chemin)
+    }
+
+    Icone(hIcone) {
+        ; pose une icône de Windows, avec sa transparence, en haut à gauche du dessin
+        info := Buffer(8 + 3 * A_PtrSize, 0)   ; ICONINFO : ses deux images, le masque et les couleurs
+        DllCall("GetIconInfo", "Ptr", hIcone, "Ptr", info)
+        masque := NumGet(info, 8 + A_PtrSize, "Ptr"), couleurs := NumGet(info, 8 + 2 * A_PtrSize, "Ptr")
+        entete := Buffer(40, 0)   ; BITMAPINFOHEADER : 32 bits par point, lignes de haut en bas
+        NumPut("UInt", 40, "Int", this.l, "Int", -this.h, "UShort", 1, "UShort", 32, entete)
+        points := Buffer(4 * this.l * this.h, 0)
+        hdc := DllCall("GetDC", "Ptr", 0, "Ptr")
+        DllCall("GetDIBits", "Ptr", hdc, "Ptr", couleurs, "UInt", 0, "UInt", this.h, "Ptr", points, "Ptr", entete, "UInt", 0)
+        DllCall("ReleaseDC", "Ptr", 0, "Ptr", hdc)
+        DllCall("DeleteObject", "Ptr", masque)
+        DllCall("DeleteObject", "Ptr", couleurs)
+        image := 0
+        DllCall("gdiplus\GdipCreateBitmapFromScan0", "Int", this.l, "Int", this.h, "Int", 4 * this.l, "Int", 0x26200A
+            , "Ptr", points, "Ptr*", &image)
+        DllCall("gdiplus\GdipSetCompositingMode", "Ptr", this.g, "Int", 1)   ; copie exacte, transparence comprise
+        DllCall("gdiplus\GdipDrawImageRectI", "Ptr", this.g, "Ptr", image, "Int", 0, "Int", 0, "Int", this.l, "Int", this.h)
+        DllCall("gdiplus\GdipSetCompositingMode", "Ptr", this.g, "Int", 0)
+        DllCall("gdiplus\GdipDisposeImage", "Ptr", image)
+    }
+
+    EnIcone() {
+        ; le dessin, transformé en icône de Windows (à détruire ensuite avec DestroyIcon).
+        ; Fait à la main : GdipCreateHICONFromBitmap assombrit les bords à demi transparents.
+        zone := Buffer(16, 0), donnees := Buffer(16 + 2 * A_PtrSize, 0)   ; Rect et BitmapData de GDI+
+        NumPut("Int", this.l, "Int", this.h, zone, 8)
+        DllCall("gdiplus\GdipBitmapLockBits", "Ptr", this.bmp, "Ptr", zone, "UInt", 1, "Int", 0x26200A, "Ptr", donnees)
+        pas := NumGet(donnees, 8, "Int"), source := NumGet(donnees, 16, "Ptr")
+        entete := Buffer(40, 0)   ; BITMAPINFOHEADER : 32 bits par point, lignes de haut en bas
+        NumPut("UInt", 40, "Int", this.l, "Int", -this.h, "UShort", 1, "UShort", 32, entete)
+        points := 0
+        couleurs := DllCall("CreateDIBSection", "Ptr", 0, "Ptr", entete, "UInt", 0, "Ptr*", &points, "Ptr", 0, "UInt", 0, "Ptr")
+        Loop this.h
+            DllCall("RtlMoveMemory", "Ptr", points + 4 * this.l * (A_Index - 1), "Ptr", source + pas * (A_Index - 1), "UPtr", 4 * this.l)
+        DllCall("gdiplus\GdipBitmapUnlockBits", "Ptr", this.bmp, "Ptr", donnees)
+        ; le masque : un bit par point, à 1 là où le dessin est tout à fait transparent
+        ligne := (this.l + 15) // 16 * 2, bits := Buffer(ligne * this.h, 0)
+        Loop this.h {
+            y := A_Index - 1
+            Loop this.l
+                if !NumGet(points, 4 * (this.l * y + A_Index - 1) + 3, "UChar")
+                    NumPut("UChar", NumGet(bits, ligne * y + (A_Index - 1) // 8, "UChar") | (0x80 >> Mod(A_Index - 1, 8))
+                        , bits, ligne * y + (A_Index - 1) // 8)
+        }
+        masque := DllCall("CreateBitmap", "Int", this.l, "Int", this.h, "UInt", 1, "UInt", 1, "Ptr", bits, "Ptr")
+        info := Buffer(8 + 3 * A_PtrSize, 0)   ; ICONINFO : une icône, son masque et ses couleurs
+        NumPut("Int", 1, info)
+        NumPut("Ptr", masque, "Ptr", couleurs, info, 8 + A_PtrSize)
+        icone := DllCall("CreateIconIndirect", "Ptr", info, "Ptr")
+        DllCall("DeleteObject", "Ptr", masque)   ; (l'icône a ses propres copies)
+        DllCall("DeleteObject", "Ptr", couleurs)
+        return icone
     }
 
     Poser(ctrl) {
