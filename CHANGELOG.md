@@ -6,6 +6,8 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), et le p
 
 ## [Non publié]
 
+## [0.3.0] - 2026-11-07
+
 ### Ajouté
 
 - Couleurs au choix : bouton palette dans le panneau, juste à gauche de ☰ (et « Couleurs… » dans le menu). Quatre ambiances (Graphite, Ardoise, Nuit, Clair), quatre accents (Ivoire, Glacier, Cobalt, Rose poudré) et deux jeux de couleurs d'état (Classique et Daltonisme), chacun en un clic. Les couleurs proposées sont ajustées pour rester lisibles sur chaque fond.
@@ -55,5 +57,6 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), et le p
 
 Première version, sous le nom « Spam X », jamais publiée : appuis automatiques sur Entrée dans chiaki-ng, panneau toujours visible, notifications, sons, raccourcis <kbd>F6</kbd> à <kbd>F10</kbd> et <kbd>Ctrl</kbd> + <kbd>F8</kbd>.
 
-[Non publié]: https://github.com/LASCAMPIA67/turbo-x/compare/v0.2.0...HEAD
+[Non publié]: https://github.com/LASCAMPIA67/turbo-x/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/LASCAMPIA67/turbo-x/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/LASCAMPIA67/turbo-x/releases/tag/v0.2.0
