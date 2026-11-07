@@ -27,7 +27,7 @@ N'écris jamais d'information personnelle : adresse IP, nom de console, chemins 
 - Les fenêtres (panneau, notification, assistant, couleurs, visite) sont créées avec le style `FENETRE` : elles ne s'activent jamais (`+E0x08000000`), pour ne pas prendre le clavier à chiaki-ng, et sont dessinées en coulisse (`+E0x02000000`), pour ne pas scintiller. Pour changer une couleur ou un texte, passer par `Peindre`, `Fond` ou `Maj`, qui ne redessinent que si quelque chose change.
 - Jamais de code couleur écrit en dur : toujours une couleur du thème (`C_FOND`, `C_TEXTE`, `C_ACCENT`…), calculée par `CalculerCouleurs` d'après les choix de la palette. Un élément de couleur fixe est créé avec `Teinter`, pour être repeint quand on change de couleurs. La couleur dit d'abord l'état : actif (`C_VERT`), en pause (`C_AMBRE`), arrêté (`C_ROUGE`).
 - Un texte doit rester lisible : un contraste d'au moins 4,5 avec son fond (fonction `Contraste`), comme le demandent les règles d'accessibilité du Web (WCAG).
-- L'icône est dessinée par `outils/icone.ps1`, qui écrit `src/TurboX.ico` et `docs/images/icone.png` : pour la changer, modifie ce script puis relance-le. Près de l'horloge, Turbo X l'entoure lui-même de la couleur de l'état (`IconeEtat`).
+- L'icône est dessinée par `outils/icone.ps1`, qui écrit `src/TurboX.ico` et `docs/images/icone.png` : pour la changer, modifie ce script puis relance-le. Près de l'horloge, Turbo X l'entoure lui-même de la couleur de l'état (`IconeEtat`). `docs/images/carte-github.png` est l'image d'aperçu du dépôt, affichée quand on partage son lien (réglage *Social preview* de GitHub).
 
 ## Vérifier avant d'envoyer
 
