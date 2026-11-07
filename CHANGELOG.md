@@ -6,6 +6,20 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), et le p
 
 ## [Non publié]
 
+### Ajouté
+
+- Couleurs au choix : bouton palette dans le panneau, juste à gauche de ☰ (et « Couleurs… » dans le menu). Quatre ambiances (Graphite, Ardoise, Nuit, Clair), quatre accents (Ivoire, Glacier, Cobalt, Rose poudré) et deux jeux de couleurs d'état (Classique et Daltonisme), chacun en un clic. Les couleurs proposées sont ajustées pour rester lisibles sur chaque fond.
+- Palette complète, pour n'importe quelle couleur : trois curseurs (teinte, intensité, lumière), aperçu en direct, saisie d'un code couleur, boutons « Valider » et « Annuler ». Chaque état peut aussi avoir sa propre couleur.
+- Réglages `AMBIANCE`, `ACCENT` et `ETATS` en haut du script : les couleurs de départ.
+- Visite guidée au premier lancement : 10 étapes (9 avec un seul écran) qui présentent le panneau, avec un cadre lumineux autour de chaque partie. Cinq étapes se font en appuyant soi-même sur la touche (<kbd>F10</kbd> / <kbd>F9</kbd>, <kbd>F6</kbd>, <kbd>F7</kbd>, <kbd>F5</kbd>, la palette) et se cochent toutes seules. À revoir depuis le menu.
+- La souris prend la forme d'une main au-dessus de tout ce qui se clique.
+
+### Modifié
+
+- « Remettre les réglages d'origine » remet aussi les couleurs.
+- Les boutons s'éclairent plus vite sous la souris.
+- Turbo X demande moins de travail au PC : il ne cherche plus chiaki-ng parmi tous les programmes ouverts plusieurs fois de suite à chaque rafraîchissement.
+
 ## [0.2.0] - 2026-11-07
 
 ### Ajouté
