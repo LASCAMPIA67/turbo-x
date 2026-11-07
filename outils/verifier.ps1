@@ -8,7 +8,8 @@
        les autres fichiers texte en UTF-8 sans BOM, avec fins de ligne LF.
     2. Version : VERSION et ;@Ahk2Exe-SetVersion identiques dans src\TurboX.ahk ;
        pour une publication, l'étiquette et le journal des modifications doivent suivre.
-    3. AutoHotkey vérifie src\TurboX.ahk sans le lancer (/Validate).
+    3. Icône : src\TurboX.ico et docs\images\icone.png sont bien ceux que dessine outils\icone.ps1.
+    4. AutoHotkey vérifie src\TurboX.ahk sans le lancer (/Validate).
 
 .PARAMETER AutoHotkey
     Chemin de AutoHotkey64.exe. Par défaut : celui installé sur le PC,
@@ -81,7 +82,23 @@ if ($Etiquette) {
     }
 }
 
-# 3. AutoHotkey vérifie le script sans le lancer
+# 3. L'icône du dépôt est celle que dessine outils\icone.ps1 (sinon : relancer l'outil)
+$dossierIcone = Join-Path -Path ([System.IO.Path]::GetTempPath()) -ChildPath "turbo-x-icone-$PID"
+try {
+    $null = & (Join-Path -Path $PSScriptRoot -ChildPath 'icone.ps1') -Dossier $dossierIcone
+    foreach ($icone in @(@('src/TurboX.ico', 'TurboX.ico'), @('docs/images/icone.png', 'icone.png'))) {
+        $chemin = Join-Path -Path $racine -ChildPath $icone[0]
+        $attendue = (Get-FileHash -LiteralPath (Join-Path -Path $dossierIcone -ChildPath $icone[1])).Hash
+        if (-not (Test-Path -LiteralPath $chemin) -or (Get-FileHash -LiteralPath $chemin).Hash -ne $attendue) {
+            $erreurs.Add("$($icone[0]) : pas à jour, lance .\outils\icone.ps1 pour redessiner l'icône")
+        }
+    }
+}
+finally {
+    Remove-Item -LiteralPath $dossierIcone -Recurse -Force -ErrorAction SilentlyContinue
+}
+
+# 4. AutoHotkey vérifie le script sans le lancer
 $ahk = Get-AutoHotkey -Chemin $AutoHotkey
 $sortie = [System.IO.Path]::GetTempFileName()
 $sortieErreur = [System.IO.Path]::GetTempFileName()

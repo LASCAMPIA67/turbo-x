@@ -6,8 +6,8 @@ Seule la dernière version publiée reçoit des corrections de sécurité.
 
 | Version | Corrections de sécurité |
 | --- | --- |
-| 0.3.x | oui |
-| 0.2.x et avant | non |
+| 0.4.x | oui |
+| 0.3.x et avant | non |
 
 ## Signaler une faille
 

@@ -6,8 +6,8 @@
     "MD013": false,
     // Titres identiques permis s'ils ne sont pas voisins (« Ajouté » dans chaque version du journal).
     "MD024": { "siblings_only": true },
-    // Seules balises HTML permises : les touches du clavier.
-    "MD033": { "allowed_elements": ["kbd"] }
+    // Seules balises HTML permises : les touches du clavier, et l'icône en haut de la présentation.
+    "MD033": { "allowed_elements": ["kbd", "img"] }
   },
   "globs": ["**/*.md"],
   "ignores": ["dist/**", "outils/.cache/**", "node_modules/**"]

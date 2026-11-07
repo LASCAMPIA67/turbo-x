@@ -14,7 +14,7 @@ body:
     attributes:
       label: Version de Turbo X
       description: Elle est écrite en haut du panneau, à côté de « TURBO X ».
-      placeholder: v0.3.0
+      placeholder: v0.4.0
     validations:
       required: true
   - type: dropdown

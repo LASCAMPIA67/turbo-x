@@ -1,5 +1,7 @@
 # Turbo X
 
+<img src="docs/images/icone.png" alt="L'icône de Turbo X : un X suivi de ses échos" width="96" height="96" align="right">
+
 **Le bouton turbo de la touche ✕ pour ta PS5.** Turbo X appuie sur ✕ en boucle à ta place, à travers [chiaki-ng](https://github.com/streetpea/chiaki-ng), le logiciel libre et gratuit de Lecture à distance.
 
 [![Vérification](https://github.com/LASCAMPIA67/turbo-x/actions/workflows/verification.yml/badge.svg)](https://github.com/LASCAMPIA67/turbo-x/actions/workflows/verification.yml)
@@ -34,6 +36,7 @@
 - **Un assistant de démarrage** : une liste qui se coche toute seule (chiaki-ng installé, PS5 jumelée, allumée, connectée…), avec la marche à suivre pour chaque étape.
 - **Tout est automatique** : au lancement, Turbo X trouve ta PS5 sur ton réseau, ouvre chiaki-ng et le connecte directement si la console est allumée.
 - **Un panneau toujours visible** sur l'écran du jeu, même avec deux écrans, qui ne prend jamais le clavier à chiaki-ng.
+- **Son icône près de l'horloge** prend la couleur de l'état : tu vois d'un coup d'œil où en est Turbo X, même panneau masqué.
 - **Tes couleurs** : quelques ambiances soignées en un clic, ou n'importe quelle couleur avec la palette complète.
 - **Il se souvient de tes choix** : cadence, coin et écran du panneau, sons, couleurs.
 
@@ -85,6 +88,10 @@ Une bulle présente chaque partie du panneau, entourée d'un cadre lumineux. Pou
 Le panneau affiche l'état en grand : **ACTIF** (vert), **EN PAUSE** (ambre) ou **ARRÊTÉ** (rouge). Une notification apparaît en haut de l'écran à chaque changement.
 
 ![Les notifications : turbo activé, en pause, arrêté, cadence](docs/images/notifications.png)
+
+L'icône de Turbo X, près de l'horloge, montre aussi l'état : son contour est vert, ambre ou rouge (ou les couleurs choisies dans la palette), même quand le panneau est masqué avec <kbd>F7</kbd>.
+
+![L'icône près de l'horloge : contour vert quand Turbo X est actif, ambre en pause, rouge à l'arrêt](docs/images/icone-etats.png)
 
 ## Raccourcis clavier
 
@@ -172,7 +179,7 @@ Le fichier `SHA256SUMS.txt` de chaque version donne aussi l'empreinte de chaque 
 
 **Windows ou l'antivirus bloque `TurboX.exe`.** Voir la note de la partie [Installation](#installation). Les programmes AutoHotkey transformés en `.exe` sont parfois signalés à tort ; le code est ouvert, et chaque fichier publié est attesté.
 
-**Je ne trouve pas l'icône près de l'horloge.** Windows 11 la cache : clique sur la petite flèche **^** à gauche de l'horloge. Le plus simple reste le bouton ☰ ou le clic droit sur le panneau.
+**Je ne trouve pas l'icône près de l'horloge.** Windows 11 la cache : clique sur la petite flèche **^** à gauche de l'horloge. Pour qu'elle reste toujours visible, fais-la glisser de là jusqu'à côté de l'horloge (ou **Paramètres › Personnalisation › Barre des tâches › Autres icônes de la barre d'état système**, puis active Turbo X). Pour le menu, le plus simple reste le bouton ☰ ou le clic droit sur le panneau.
 
 **Je veux revoir la visite guidée.** Menu ☰ › **Visite guidée**. Elle ne s'ouvre toute seule qu'au tout premier lancement.
 
