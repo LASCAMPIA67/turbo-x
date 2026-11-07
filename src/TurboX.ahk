@@ -144,6 +144,7 @@ silence        := 0       ; pas de notification de pause / reprise avant ce mome
 asstVisible    := false   ; l'assistant de démarrage est-il affiché ?
 asstEcran      := 0       ; écran au milieu duquel il a été placé
 asstDeplace    := false   ; l'a-t-on déplacé à la main ? (il ne suit alors plus l'écran du jeu)
+asstPlace      := {x: "", y: ""}   ; où Turbo X l'a placé lui-même (pour voir s'il a été déplacé)
 asstFini       := 0       ; depuis quand tout est coché
 actions        := []      ; ce que font les boutons de l'assistant
 lancement      := ""      ; ouverture de chiaki-ng au lancement : "attente", "connexion" puis "fait"
@@ -157,6 +158,7 @@ fonds          := Map()   ; dernière couleur de fond donnée à chaque élémen
 cliquables     := Map()   ; les éléments qui se cliquent : la souris y prend la forme d'une main
 coulVisible    := false   ; la fenêtre des couleurs est-elle affichée ?
 coulDeplace    := false   ; l'a-t-on déplacée à la main ? (elle ne suit alors plus le panneau)
+coulPlace      := {x: "", y: ""}   ; où Turbo X l'a placée elle-même
 pastilleSurvol := 0       ; numéro de la pastille sous la souris (0 = aucune)
 derniereTeinte := 0       ; quand les couleurs ont été repeintes pour la dernière fois
 palette        := {cible: "", t: 0, s: 0, l: 0, avant: [], tenu: 0}   ; la palette complète : ce qu'elle change, sa couleur (teinte, intensité, lumière), le curseur tenu
@@ -475,7 +477,8 @@ A_IconTip := "Turbo X"
 CocherSons()
 
 OnExit(Fermeture)
-OnMessage(0x201, Glisser)   ; clic gauche : déplacer l'assistant ou les couleurs, tenir un curseur de la palette
+OnMessage(0x201, Glisser)          ; clic gauche : déplacer l'assistant ou les couleurs, tenir un curseur de la palette
+OnMessage(0x232, FinDeplacement)   ; fin d'un déplacement à la main
 OnMessage(0x20, Curseur)    ; la souris prend la forme d'une main au-dessus de ce qui se clique
 lancement      := OUVRIR_CHIAKI ? "attente" : "fait"
 lancementDebut := A_TickCount
@@ -951,7 +954,8 @@ CentrerAssistant(ecran) {
     catch
         MonitorGetWorkArea(, &zG, &zH, &zD, &zB)
     WinGetPos(,, &aL, &aH, asst)
-    WinMove(zG + (zD - zG - aL) // 2, zH + Max(0, (zB - zH - aH) // 2),,, asst)
+    WinMove(x := zG + (zD - zG - aL) // 2, y := zH + Max(0, (zB - zH - aH) // 2),,, asst)
+    asstPlace.x := x, asstPlace.y := y
 }
 
 AssistantMasquer(parLUtilisateur := false) {
@@ -1093,18 +1097,25 @@ MajLigne(ligne, icone, couleurIcone, couleurTitre, statut, couleurStatut) {
 Glisser(wParam, lParam, msg, hwnd) {
     ; l'assistant et la fenêtre des couleurs se déplacent en les tenant par le fond ou par un texte
     ; (pas par un bouton) ; un curseur de la palette suit la souris tant qu'on le tient
-    global asstDeplace, coulDeplace
-    if (hwnd = asst.Hwnd) {
-        asstDeplace := true            ; il ne suivra plus l'écran du jeu tout seul
-        PostMessage(0xA1, 2,,, asst)   ; comme si on tenait une barre de titre
-    } else if (hwnd = coul.Hwnd) {
-        coulDeplace := true            ; elle ne suivra plus le panneau tout seule
-        PostMessage(0xA1, 2,,, coul)
-    } else {
+    if (hwnd = asst.Hwnd || hwnd = coul.Hwnd)
+        PostMessage(0xA1, 2,,, hwnd)   ; comme si on tenait une barre de titre
+    else
         for i, glissiere in pCurseurs
             if (hwnd = glissiere.Hwnd)
                 return PaletteTenir(i)
-    }
+}
+
+FinDeplacement(wParam, lParam, msg, hwnd) {
+    ; on vient de lâcher l'assistant ou la fenêtre des couleurs : s'ils ont vraiment bougé
+    ; (pas un simple clic), ils restent où on les a mis au lieu de suivre le jeu ou le panneau
+    global asstDeplace, coulDeplace
+    WinGetPos(&x, &y,,, hwnd)
+    if (hwnd = asst.Hwnd && (x != asstPlace.x || y != asstPlace.y))
+        asstDeplace := true
+    else if (hwnd = coul.Hwnd && (x != coulPlace.x || y != coulPlace.y))
+        coulDeplace := true
+    if (hwnd = coul.Hwnd && visiteVisible)
+        VisiteMaj()
 }
 
 ; ─────────────────────────────── COULEURS ───────────────────────────────
@@ -1144,6 +1155,7 @@ CouleursPlacer() {
     ecart := Round(12 * A_ScreenDPI / 96)
     x := (COIN = 2 || COIN = 3) ? pX - cL - ecart : pX + pL + ecart
     y := Max(zH + ecart, Min(COIN >= 3 ? pY + pH - cH : pY, zB - cH - ecart))
+    coulPlace.x := x, coulPlace.y := y
     if (x != cX || y != cY)
         WinMove(x, y,,, coul)
 }
@@ -1677,7 +1689,10 @@ VisiteEtape(n) {
 }
 
 VisiteBouton(n) {
-    ; bouton 1 : commencer, suivant ou terminer ; bouton 2 : passer ou retour
+    ; bouton 1 : commencer, suivant ou terminer ; bouton 2 : passer ou retour.
+    ; La fenêtre des couleurs, ouverte pendant l'étape de la palette, se referme.
+    if coulVisible
+        CouleursFermer()
     suivante := n = 1 ? vEtape + 1 : vEtape - 1
     if (suivante >= 1 && suivante <= vEtapes.Length)
         VisiteEtape(suivante)
@@ -1691,6 +1706,8 @@ VisiteFermer() {
     visiteVisible := false
     visite.Hide()
     CadreCacher()
+    if coulVisible
+        CouleursFermer()
     Noter("visite_vue", 1)
     if vAssistant
         AssistantAfficher()
@@ -1742,8 +1759,8 @@ VisiteBravo(tache) {
 }
 
 VisitePlacer(e) {
-    ; à côté du panneau (et de la fenêtre des couleurs), à la hauteur de ce que montre l'étape ;
-    ; sans rien à montrer, au milieu de l'écran du jeu
+    ; à côté du panneau (et de la fenêtre des couleurs quand elle y est collée), à la hauteur de ce
+    ; que montre l'étape, toujours sur l'écran du panneau ; sans rien à montrer, au milieu de l'écran du jeu
     WinGetPos(&vX, &vY, &vL, &vH, visite)
     if (e.cible = "") {
         try
@@ -1754,13 +1771,14 @@ VisitePlacer(e) {
     } else {
         WinGetPos(&pX, &pY, &pL, &pH, pan)
         gauche := pX, droite := pX + pL
-        if coulVisible {
+        if (coulVisible && !coulDeplace) {
             WinGetPos(&cX,, &cL,, coul)
             gauche := Min(gauche, cX), droite := Max(droite, cX + cL)
         }
         ZoneEcran(&zG, &zH, &zD, &zB)
         ecart := Round(16 * A_ScreenDPI / 96)
         x := (COIN = 2 || COIN = 3) ? gauche - vL - ecart : droite + ecart
+        x := Max(zG + ecart, Min(x, zD - vL - ecart))
         z := VisiteZone(e.cible)
         y := z ? z.y + (z.h - vH) // 2 : vY
         y := Max(zH + ecart, Min(y, zB - vH - ecart))
