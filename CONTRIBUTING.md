@@ -24,8 +24,9 @@ N'écris jamais d'information personnelle : adresse IP, nom de console, chemins 
 - Noms et commentaires **en français**, avec des phrases simples.
 - Les **réglages restent en haut** de `src/TurboX.ahk`.
 - Ne jamais casser la sécurité : rien n'est envoyé si chiaki-ng n'est pas au premier plan et connecté à la PS5, et la touche est toujours relâchée à la fermeture.
-- Les fenêtres (panneau, notification, assistant) ne s'activent jamais (`+E0x08000000`) : elles ne doivent pas prendre le clavier à chiaki-ng.
-- Seulement les couleurs du thème, en haut du script. La couleur dit l'état : vert, ambre, rouge.
+- Les fenêtres (panneau, notification, assistant, couleurs, visite) sont créées avec le style `FENETRE` : elles ne s'activent jamais (`+E0x08000000`), pour ne pas prendre le clavier à chiaki-ng, et sont dessinées en coulisse (`+E0x02000000`), pour ne pas scintiller. Pour changer une couleur ou un texte, passer par `Peindre`, `Fond` ou `Maj`, qui ne redessinent que si quelque chose change.
+- Jamais de code couleur écrit en dur : toujours une couleur du thème (`C_FOND`, `C_TEXTE`, `C_ACCENT`…), calculée par `CalculerCouleurs` d'après les choix de la palette. Un élément de couleur fixe est créé avec `Teinter`, pour être repeint quand on change de couleurs. La couleur dit d'abord l'état : actif (`C_VERT`), en pause (`C_AMBRE`), arrêté (`C_ROUGE`).
+- Un texte doit rester lisible : un contraste d'au moins 4,5 avec son fond (fonction `Contraste`), comme le demandent les règles d'accessibilité du Web (WCAG).
 
 ## Vérifier avant d'envoyer
 

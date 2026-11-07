@@ -18,6 +18,7 @@
 - [La première fois : jumeler ta PS5](#la-première-fois--jumeler-ta-ps5)
 - [Utilisation](#utilisation)
 - [Raccourcis clavier](#raccourcis-clavier)
+- [Couleurs](#couleurs)
 - [Réglages](#réglages)
 - [Sécurité](#sécurité)
 - [Dépannage](#dépannage)
@@ -29,10 +30,12 @@
 
 - **Il appuie sur ✕ pour toi**, de 1 à 10 fois par seconde (✕ correspond à la touche Entrée dans chiaki-ng).
 - **Sécurité d'abord :** il n'appuie que si la fenêtre chiaki-ng est au premier plan **et** connectée à ta PS5. Sinon, il se met en pause tout seul et te dit pourquoi.
+- **Une visite guidée** au premier lancement : en une minute, elle te montre le panneau et te fait essayer les touches.
 - **Un assistant de démarrage** : une liste qui se coche toute seule (chiaki-ng installé, PS5 jumelée, allumée, connectée…), avec la marche à suivre pour chaque étape.
 - **Tout est automatique** : au lancement, Turbo X trouve ta PS5 sur ton réseau, ouvre chiaki-ng et le connecte directement si la console est allumée.
 - **Un panneau toujours visible** sur l'écran du jeu, même avec deux écrans, qui ne prend jamais le clavier à chiaki-ng.
-- **Il se souvient de tes choix** : cadence, coin et écran du panneau, sons.
+- **Tes couleurs** : quelques ambiances soignées en un clic, ou n'importe quelle couleur avec la palette complète.
+- **Il se souvient de tes choix** : cadence, coin et écran du panneau, sons, couleurs.
 
 ![Les trois états du panneau : actif, en pause et arrêté](docs/images/panneau-etats.png)
 
@@ -66,12 +69,18 @@ Pour pouvoir réveiller ta PS5 depuis le mode repos : **Paramètres › Système
 
 ## Utilisation
 
-1. Lance `TurboX.exe` : l'**assistant de démarrage** s'ouvre sur l'écran du jeu, et Turbo X ouvre chiaki-ng pour toi.
-2. Suis la ligne marquée d'un trait clair. Chaque étape se coche toute seule : vert = validée, ambre = en cours, rouge = pas encore.
+1. Lance `TurboX.exe`. La toute première fois, une **visite guidée** te présente Turbo X en une minute.
+2. Ensuite, l'**assistant de démarrage** s'ouvre sur l'écran du jeu, et Turbo X ouvre chiaki-ng pour toi. Suis la ligne marquée d'un trait clair : chaque étape se coche toute seule (vert = validée, ambre = en cours, rouge = pas encore).
 3. Dans le jeu, place-toi là où il faut appuyer sur ✕, puis appuie sur <kbd>F8</kbd>.
 4. Pour arrêter, appuie à nouveau sur <kbd>F8</kbd>. Pour quitter : <kbd>Ctrl</kbd> + <kbd>F8</kbd>.
 
 ![L'assistant pendant la recherche de la PS5, puis quand tout est prêt](docs/images/assistant-etats.png)
+
+### La visite guidée
+
+Une bulle présente chaque partie du panneau, entourée d'un cadre lumineux. Pour cinq étapes, c'est toi qui essaies : appuie sur la touche indiquée, et l'étape se coche toute seule. Tu peux passer la visite, revenir en arrière ou la fermer à tout moment, et la revoir quand tu veux : menu ☰ › **Visite guidée**.
+
+![La visite guidée : le cadre lumineux autour de la cadence, et la bulle qui explique](docs/images/visite.png)
 
 Le panneau affiche l'état en grand : **ACTIF** (vert), **EN PAUSE** (ambre) ou **ARRÊTÉ** (rouge). Une notification apparaît en haut de l'écran à chaque changement.
 
@@ -91,6 +100,22 @@ Le panneau affiche l'état en grand : **ACTIF** (vert), **EN PAUSE** (ambre) ou 
 
 Toutes ces actions sont aussi dans le **menu** : bouton ☰ du panneau, clic droit sur le panneau, ou icône près de l'horloge.
 
+## Couleurs
+
+Clique sur la **palette**, juste à gauche du bouton ☰ du panneau (ou menu ☰ › **Couleurs…**). Un clic sur une pastille change les couleurs tout de suite, et Turbo X s'en souvient.
+
+- **Ambiance** : le fond et le texte. Graphite (au départ), Ardoise, Nuit ou Clair.
+- **Accent** : les titres et les boutons. Ivoire (au départ), Glacier, Cobalt ou Rose poudré.
+- **États** : les couleurs de « actif », « en pause » et « arrêté ». Classique (vert, ambre, rouge) ou **Daltonisme** (bleu, jaune, orange), plus facile à distinguer quand on voit mal le rouge et le vert. Les trois pastilles suivantes changent chaque état séparément.
+
+La pastille arc-en-ciel, au bout d'une ligne, ouvre la **palette complète** : trois curseurs (teinte, intensité, lumière) pour obtenir n'importe quelle couleur, que l'on voit changer en direct. Pour taper un code couleur, clique sur le code affiché à droite (par exemple `#9DC2E5`). **Valider** garde la couleur, **Annuler** revient à la précédente. En bas de la fenêtre, **Remettre les couleurs d'origine** annule tout.
+
+Les couleurs proposées sont ajustées toutes seules pour rester bien lisibles, même sur un fond clair.
+
+![La fenêtre des couleurs, puis la palette complète ouverte sur l'accent](docs/images/couleurs.png)
+
+![Le panneau dans les ambiances Graphite, Ardoise, Nuit (avec les couleurs Daltonisme) et Clair](docs/images/ambiances.png)
+
 ## Réglages
 
 La plupart des réglages se font avec les touches ci-dessus, et Turbo X s'en souvient. Pour aller plus loin avec le code source, ils sont tous en haut de `src/TurboX.ahk` :
@@ -109,8 +134,11 @@ La plupart des réglages se font avec les touches ci-dessus, et Turbo X s'en sou
 | `ECRAN` | `0` | écran du panneau : 0 = celui du jeu, 1 = le plus à gauche, 2 = le suivant… |
 | `OUVRIR_CHIAKI` | `true` | ouvrir chiaki-ng au lancement |
 | `CONNEXION_AUTO` | `true` | connecter chiaki-ng tout seul si la PS5 est allumée |
+| `AMBIANCE` | `graphite` | couleurs de départ du fond et du texte : `graphite`, `ardoise`, `nuit`, `clair`, ou un code couleur comme `1B2430` |
+| `ACCENT` | `ivoire` | couleur de départ des titres et des boutons : `ivoire`, `glacier`, `cobalt`, `rose`, ou un code couleur |
+| `ETATS` | `classique` | couleurs de départ des états : `classique`, `daltonisme`, ou trois codes `actif,pause,arrêté` |
 
-Ce que Turbo X retient (cadence, coin, écran, sons) est rangé dans `%APPDATA%\Turbo X\memoire.ini`. Pour tout remettre comme au départ : menu ☰ › **Remettre les réglages d'origine**.
+Ce que Turbo X retient (cadence, coin, écran, sons, couleurs) est rangé dans `%APPDATA%\Turbo X\memoire.ini`. Pour tout remettre comme au départ : menu ☰ › **Remettre les réglages d'origine**.
 
 ## Sécurité
 
@@ -146,11 +174,17 @@ Le fichier `SHA256SUMS.txt` de chaque version donne aussi l'empreinte de chaque 
 
 **Je ne trouve pas l'icône près de l'horloge.** Windows 11 la cache : clique sur la petite flèche **^** à gauche de l'horloge. Le plus simple reste le bouton ☰ ou le clic droit sur le panneau.
 
+**Je veux revoir la visite guidée.** Menu ☰ › **Visite guidée**. Elle ne s'ouvre toute seule qu'au tout premier lancement.
+
+**Mes couleurs ne me plaisent plus.** Palette du panneau › **Remettre les couleurs d'origine**.
+
 ## Questions fréquentes
 
 **Ça marche avec n'importe quel jeu ?** Oui : Turbo X appuie sur ✕, quel que soit le jeu. Place-toi simplement là où il faut appuyer.
 
 **Est-ce autorisé ?** Turbo X simule des appuis sur une touche, comme une manette « turbo ». Certains jeux en ligne interdisent l'automatisation : respecte les règles de ton jeu. Tu l'utilises sous ta responsabilité.
+
+**Je distingue mal le rouge et le vert.** Dans la palette du panneau, choisis les états **Daltonisme** : bleu pour « actif », jaune pour « en pause », orange pour « arrêté ». Chaque état a aussi sa propre icône (lecture, pause, arrêt).
 
 **Et la PS4 ?** Turbo X est pensé pour la PS5. chiaki-ng gère aussi la PS4, mais la recherche automatique de Turbo X ne trouve que les PS5.
 

@@ -6,6 +6,27 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), et le p
 
 ## [Non publié]
 
+## [0.3.0] - 2026-11-07
+
+### Ajouté
+
+- Couleurs au choix : bouton palette dans le panneau, juste à gauche de ☰ (et « Couleurs… » dans le menu). Quatre ambiances (Graphite, Ardoise, Nuit, Clair), quatre accents (Ivoire, Glacier, Cobalt, Rose poudré) et deux jeux de couleurs d'état (Classique et Daltonisme), chacun en un clic. Les couleurs proposées sont ajustées pour rester lisibles sur chaque fond.
+- Palette complète, pour n'importe quelle couleur : trois curseurs (teinte, intensité, lumière), aperçu en direct, saisie d'un code couleur, boutons « Valider » et « Annuler ». Chaque état peut aussi avoir sa propre couleur.
+- Réglages `AMBIANCE`, `ACCENT` et `ETATS` en haut du script : les couleurs de départ.
+- Visite guidée au premier lancement : 10 étapes (9 avec un seul écran) qui présentent le panneau, avec un cadre lumineux qui apparaît en fondu puis glisse en douceur d'une partie à l'autre. Cinq étapes se font en appuyant soi-même sur la touche (<kbd>F10</kbd> / <kbd>F9</kbd>, <kbd>F6</kbd>, <kbd>F7</kbd>, <kbd>F5</kbd>, la palette) et se cochent toutes seules. La bulle suit l'écran du jeu, et la fenêtre des couleurs ouverte pendant la visite se referme à l'étape suivante. À revoir depuis le menu.
+- La souris prend la forme d'une main au-dessus de tout ce qui se clique.
+
+### Modifié
+
+- « Remettre les réglages d'origine » remet aussi les couleurs.
+- Les boutons s'éclairent plus vite sous la souris.
+- Les fenêtres sont dessinées d'un seul coup, et seul ce qui change est redessiné : plus de scintillement quand les couleurs ou l'état changent.
+- Turbo X demande moins de travail au PC : il ne cherche plus chiaki-ng parmi tous les programmes ouverts plusieurs fois de suite à chaque rafraîchissement.
+
+### Corrigé
+
+- Un simple clic sur le fond de l'assistant de démarrage ne l'empêche plus de suivre l'écran du jeu : il reste en place seulement s'il a vraiment été déplacé.
+
 ## [0.2.0] - 2026-11-07
 
 ### Ajouté
@@ -40,5 +61,6 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), et le p
 
 Première version, sous le nom « Spam X », jamais publiée : appuis automatiques sur Entrée dans chiaki-ng, panneau toujours visible, notifications, sons, raccourcis <kbd>F6</kbd> à <kbd>F10</kbd> et <kbd>Ctrl</kbd> + <kbd>F8</kbd>.
 
-[Non publié]: https://github.com/LASCAMPIA67/turbo-x/compare/v0.2.0...HEAD
+[Non publié]: https://github.com/LASCAMPIA67/turbo-x/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/LASCAMPIA67/turbo-x/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/LASCAMPIA67/turbo-x/releases/tag/v0.2.0
