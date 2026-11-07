@@ -6,6 +6,22 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), et le p
 
 ## [Non publié]
 
+## [1.0.0] - 2026-11-07
+
+Première version complète : Turbo X se télécharge, s'installe et s'utilise sans rien connaître, guide compris.
+
+### Ajouté
+
+- Le guide `LISEZ-MOI.html`, dans l'archive, à côté de `TurboX.exe` : toute la présentation du projet, avec ses images, à lire même sans Internet, claire ou sombre comme Windows, prête à imprimer. Il est fabriqué à partir de `README.md` par `outils/guide.ps1`, qui refuse les liens cassés.
+- « Guide d'utilisation » dans le menu : ouvre ce guide (depuis le code source, la page du projet sur GitHub).
+- « Vérifier la connexion à la PS5 » dans le menu, retenu d'une fois sur l'autre : pour jouer par Internet avec `TurboX.exe`, sans toucher au code.
+- La présentation explique comment retrouver Turbo X dans le menu Démarrer, le mettre à jour et le désinstaller.
+
+### Modifié
+
+- La visite guidée indique où trouver le guide.
+- Les outils de fabrication demandent PowerShell 7.
+
 ## [0.4.0] - 2026-11-07
 
 ### Ajouté
@@ -73,7 +89,8 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), et le p
 
 Première version, sous le nom « Spam X », jamais publiée : appuis automatiques sur Entrée dans chiaki-ng, panneau toujours visible, notifications, sons, raccourcis <kbd>F6</kbd> à <kbd>F10</kbd> et <kbd>Ctrl</kbd> + <kbd>F8</kbd>.
 
-[Non publié]: https://github.com/LASCAMPIA67/turbo-x/compare/v0.4.0...HEAD
+[Non publié]: https://github.com/LASCAMPIA67/turbo-x/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/LASCAMPIA67/turbo-x/compare/v0.4.0...v1.0.0
 [0.4.0]: https://github.com/LASCAMPIA67/turbo-x/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/LASCAMPIA67/turbo-x/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/LASCAMPIA67/turbo-x/releases/tag/v0.2.0

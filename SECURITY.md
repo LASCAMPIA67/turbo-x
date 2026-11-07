@@ -6,8 +6,8 @@ Seule la dernière version publiée reçoit des corrections de sécurité.
 
 | Version | Corrections de sécurité |
 | --- | --- |
-| 0.4.x | oui |
-| 0.3.x et avant | non |
+| 1.0.x | oui |
+| 0.4.x et avant | non |
 
 ## Signaler une faille
 
@@ -19,11 +19,11 @@ Décris le problème, comment le reproduire et son effet possible. Tu recevras u
 
 Pour évaluer les risques, voici exactement ce que fait le programme :
 
-- **Clavier :** il envoie la touche réglée (Entrée par défaut) uniquement quand la fenêtre au premier plan est chiaki-ng et que chiaki-ng est connecté à la PS5. La touche est toujours relâchée à la fermeture.
+- **Clavier :** il envoie la touche réglée (Entrée par défaut) uniquement quand la fenêtre au premier plan est chiaki-ng et que chiaki-ng est connecté à la PS5 (cette vérification peut être coupée dans le menu, pour jouer par Internet). La touche est toujours relâchée à la fermeture.
 - **Réseau local :** pour trouver la PS5, il envoie la même question que chiaki-ng (protocole de découverte de la Lecture à distance, port UDP 9302) sur chacune des connexions du PC, et lit les réponses. Il lit aussi la liste des connexions de Windows pour savoir si chiaki-ng est connecté à la PS5 (port 9295).
 - **Registre de Windows :** il lit, sans jamais les modifier, le nom des consoles jumelées et le profil actif dans les réglages de chiaki-ng. Il ne lit jamais les clés d'association ni les informations de compte.
 - **Fichiers :** il écrit ses propres réglages dans `%APPDATA%\Turbo X\memoire.ini`, et rien d'autre.
-- **Internet :** aucune donnée n'est envoyée. Le bouton « Télécharger chiaki-ng » de l'assistant ouvre simplement la page de téléchargement de chiaki-ng dans ton navigateur.
+- **Internet :** aucune donnée n'est envoyée. Le bouton « Télécharger chiaki-ng » de l'assistant ouvre simplement la page de téléchargement de chiaki-ng dans ton navigateur, et « Guide d'utilisation » ouvre le guide (le fichier `LISEZ-MOI.html`, ou la page du projet sur GitHub).
 
 ## Fichiers publiés
 

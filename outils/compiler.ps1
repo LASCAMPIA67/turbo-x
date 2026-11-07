@@ -1,15 +1,17 @@
 ﻿<#
 .SYNOPSIS
-    Fabrique TurboX.exe et l'archive à publier, à partir de src\TurboX.ahk.
+    Fabrique TurboX.exe, son guide et l'archive à publier, à partir de src\TurboX.ahk et de README.md.
 
 .DESCRIPTION
     Utilise les versions officielles figées d'AutoHotkey (base de l'exe) et d'Ahk2Exe,
     décrites dans outils\versions.psd1 et vérifiées par empreinte SHA-256.
-    Résultat dans dist\ : TurboX.exe, TurboX-<version>.zip et SHA256SUMS.txt.
+    Le guide LISEZ-MOI.html est fabriqué par outils\guide.ps1, à partir de README.md.
+    Résultat dans dist\ : TurboX.exe, LISEZ-MOI.html, TurboX-<version>.zip et SHA256SUMS.txt.
 
 .EXAMPLE
     .\outils\compiler.ps1
 #>
+#Requires -Version 7.2
 [CmdletBinding()]
 param()
 
@@ -48,11 +50,15 @@ if ($processus.ExitCode -ne 0 -or -not (Test-Path -LiteralPath $exe)) {
     throw "Ahk2Exe n'a pas pu fabriquer TurboX.exe (code $($processus.ExitCode)). $message"
 }
 
-# L'archive à télécharger : l'exe et la licence
+# Le guide, à lire même sans Internet : la présentation du projet, en une seule page
+$guide = Join-Path -Path $dist -ChildPath 'LISEZ-MOI.html'
+$null = & (Join-Path -Path $PSScriptRoot -ChildPath 'guide.ps1') -Sortie $guide
+
+# L'archive à télécharger : l'exe, son guide et la licence
 $licence = Join-Path -Path $dist -ChildPath 'LICENSE.txt'
 Copy-Item -LiteralPath (Join-Path -Path $racine -ChildPath 'LICENSE') -Destination $licence
 $archive = Join-Path -Path $dist -ChildPath "TurboX-$version.zip"
-Compress-Archive -LiteralPath $exe, $licence -DestinationPath $archive
+Compress-Archive -LiteralPath $exe, $guide, $licence -DestinationPath $archive
 Remove-Item -LiteralPath $licence
 
 # Les empreintes, pour vérifier un téléchargement
@@ -61,4 +67,4 @@ $lignes = foreach ($fichier in Get-Item -LiteralPath $exe, $archive) {
 }
 [System.IO.File]::WriteAllText((Join-Path -Path $dist -ChildPath 'SHA256SUMS.txt'), ($lignes -join "`n") + "`n")
 
-Write-Output "Turbo X $version fabriqué dans dist\ : TurboX.exe, TurboX-$version.zip, SHA256SUMS.txt"
+Write-Output "Turbo X $version fabriqué dans dist\ : TurboX.exe, LISEZ-MOI.html, TurboX-$version.zip, SHA256SUMS.txt"

@@ -14,6 +14,7 @@ N'écris jamais d'information personnelle : adresse IP, nom de console, chemins 
 ## Préparer ton PC
 
 - [AutoHotkey v2](https://www.autohotkey.com/), version 2.0.30 ou plus récente.
+- [PowerShell 7](https://learn.microsoft.com/powershell/scripting/install/install-powershell-on-windows), pour les outils de vérification et de fabrication.
 - [Git](https://git-scm.com/) et, si possible, [GitHub CLI](https://cli.github.com/).
 - Un éditeur qui suit [EditorConfig](https://editorconfig.org/). Avec Visual Studio Code, les extensions conseillées sont proposées à l'ouverture du dossier, dont la prise en charge d'AutoHotkey v2. Le projet y coupe la mise en forme automatique (`.vscode/settings.json`) : elle défait les alignements du script.
 
@@ -28,14 +29,16 @@ N'écris jamais d'information personnelle : adresse IP, nom de console, chemins 
 - Jamais de code couleur écrit en dur : toujours une couleur du thème (`C_FOND`, `C_TEXTE`, `C_ACCENT`…), calculée par `CalculerCouleurs` d'après les choix de la palette. Un élément de couleur fixe est créé avec `Teinter`, pour être repeint quand on change de couleurs. La couleur dit d'abord l'état : actif (`C_VERT`), en pause (`C_AMBRE`), arrêté (`C_ROUGE`).
 - Un texte doit rester lisible : un contraste d'au moins 4,5 avec son fond (fonction `Contraste`), comme le demandent les règles d'accessibilité du Web (WCAG).
 - L'icône est dessinée par `outils/icone.ps1`, qui écrit `src/TurboX.ico` et `docs/images/icone.png` : pour la changer, modifie ce script puis relance-le. Près de l'horloge, Turbo X l'entoure lui-même de la couleur de l'état (`IconeEtat`). `docs/images/carte-github.png` est l'image d'aperçu du dépôt, affichée quand on partage son lien (réglage *Social preview* de GitHub).
+- Le guide `LISEZ-MOI.html`, rangé dans l'archive à côté de `TurboX.exe`, est fabriqué à partir de `README.md` par `outils/guide.ps1`. Ce qui ne sert que sur GitHub (badges, sommaire, code source, contribution) va entre `<!-- hors-guide -->` et `<!-- /hors-guide -->`. Un lien vers un titre absent du guide arrête la fabrication.
 
 ## Vérifier avant d'envoyer
 
-Dans PowerShell, depuis le dossier du projet :
+Dans PowerShell 7, depuis le dossier du projet :
 
 ```powershell
 .\outils\verifier.ps1    # script sans erreur, encodage, fins de ligne, version, icône à jour
-.\outils\compiler.ps1    # fabrique dist\TurboX.exe
+.\outils\compiler.ps1    # fabrique dist\TurboX.exe, le guide et l'archive
+.\outils\guide.ps1      # fabrique seulement le guide, dist\LISEZ-MOI.html
 .\outils\icone.ps1       # redessine l'icône, après une modification de son dessin
 ```
 
@@ -70,10 +73,10 @@ Exemple : `feat: l'assistant s'ouvre sur l'écran du jeu`.
 
 Turbo X suit le [versionnage sémantique](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORRECTIF`.
 
-- **CORRECTIF** (0.2.1) : uniquement des corrections.
-- **MINEUR** (0.3.0) : de nouvelles fonctions, sans rien casser.
+- **CORRECTIF** (1.0.1) : uniquement des corrections.
+- **MINEUR** (1.1.0) : de nouvelles fonctions, sans rien casser.
 - **MAJEUR** (2.0.0) : des changements qui obligent à changer ses habitudes (touches, réglages…).
-- Tant que la version commence par **0.**, le projet est en construction. La **1.0.0** sera la première version complète.
+- Les versions **0.x** ont construit le projet ; la **1.0.0** est la première version complète.
 
 Pour publier une version :
 

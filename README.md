@@ -1,16 +1,22 @@
 # Turbo X
 
+<!-- hors-guide -->
 <img src="docs/images/icone.png" alt="L'icône de Turbo X : un X suivi de ses échos" width="96" height="96" align="right">
+<!-- /hors-guide -->
 
 **Le bouton turbo de la touche ✕ pour ta PS5.** Turbo X appuie sur ✕ en boucle à ta place, à travers [chiaki-ng](https://github.com/streetpea/chiaki-ng), le logiciel libre et gratuit de Lecture à distance.
 
+<!-- hors-guide -->
 [![Vérification](https://github.com/LASCAMPIA67/turbo-x/actions/workflows/verification.yml/badge.svg)](https://github.com/LASCAMPIA67/turbo-x/actions/workflows/verification.yml)
 [![Dernière version](https://img.shields.io/github/v/release/LASCAMPIA67/turbo-x?label=version)](https://github.com/LASCAMPIA67/turbo-x/releases/latest)
 [![Licence MIT](https://img.shields.io/github/license/LASCAMPIA67/turbo-x?label=licence)](LICENSE)
 ![Windows 10 et 11](https://img.shields.io/badge/Windows-10%20%7C%2011-informational)
 ![AutoHotkey v2](https://img.shields.io/badge/AutoHotkey-v2-informational)
+<!-- /hors-guide -->
 
 ![Le panneau de Turbo X et son assistant de démarrage](docs/images/apercu.png)
+
+<!-- hors-guide -->
 
 ## Sommaire
 
@@ -28,6 +34,8 @@
 - [Contribuer](#contribuer)
 - [Licence et avertissement](#licence-et-avertissement)
 
+<!-- /hors-guide -->
+
 ## Ce que fait Turbo X
 
 - **Il appuie sur ✕ pour toi**, de 1 à 10 fois par seconde (✕ correspond à la touche Entrée dans chiaki-ng).
@@ -39,6 +47,7 @@
 - **Son icône près de l'horloge** prend la couleur de l'état : tu vois d'un coup d'œil où en est Turbo X, même panneau masqué.
 - **Tes couleurs** : quelques ambiances soignées en un clic, ou n'importe quelle couleur avec la palette complète.
 - **Il se souvient de tes choix** : cadence, coin et écran du panneau, sons, couleurs.
+- **Un guide complet**, `LISEZ-MOI.html`, livré avec Turbo X : cette page, à lire même sans Internet.
 
 ![Les trois états du panneau : actif, en pause et arrêté](docs/images/panneau-etats.png)
 
@@ -52,13 +61,21 @@
 ## Installation
 
 1. Ouvre la [dernière version publiée](https://github.com/LASCAMPIA67/turbo-x/releases/latest) et télécharge `TurboX-x.y.z.zip`.
-2. Décompresse-le où tu veux, par exemple dans `Documents\Turbo X`.
-3. Double-clique sur `TurboX.exe`.
+2. Décompresse-le où tu veux, par exemple dans `Documents\Turbo X` : clic droit sur le fichier téléchargé, puis **Extraire tout**.
+3. Double-clique sur `TurboX.exe`. Juste à côté, `LISEZ-MOI.html` reprend cette page, à lire même sans Internet.
 
 > [!NOTE]
 > Windows peut afficher « Windows a protégé votre ordinateur », parce que Turbo X n'est pas signé (un certificat de signature est payant). Clique sur **Informations complémentaires**, puis sur **Exécuter quand même**. Tu peux vérifier que le fichier vient bien de ce dépôt : voir [Vérifier un téléchargement](#vérifier-un-téléchargement).
 
+**Pour le retrouver facilement :** clic droit sur `TurboX.exe`, puis **Épingler à l'écran de démarrage**. Turbo X apparaît alors dans le menu Démarrer.
+
+**Pour le mettre à jour :** quitte Turbo X (<kbd>Ctrl</kbd> + <kbd>F8</kbd>), télécharge la nouvelle version et décompresse-la au même endroit, en remplaçant les fichiers. Tes réglages et tes couleurs sont gardés.
+
+**Pour le désinstaller :** quitte Turbo X et supprime son dossier : rien d'autre n'est installé. Pour effacer aussi ce qu'il a retenu, supprime le dossier `%APPDATA%\Turbo X` (tape ce nom dans la barre d'adresse de l'Explorateur).
+
+<!-- hors-guide -->
 **Depuis le code source :** installe [AutoHotkey v2](https://www.autohotkey.com/), télécharge ce dépôt, puis double-clique sur `src/TurboX.ahk`.
+<!-- /hors-guide -->
 
 ## La première fois : jumeler ta PS5
 
@@ -105,7 +122,7 @@ L'icône de Turbo X, près de l'horloge, montre aussi l'état : son contour est 
 | <kbd>F1</kbd> | afficher / masquer l'assistant de démarrage |
 | <kbd>Ctrl</kbd> + <kbd>F8</kbd> | quitter |
 
-Toutes ces actions sont aussi dans le **menu** : bouton ☰ du panneau, clic droit sur le panneau, ou icône près de l'horloge.
+Toutes ces actions sont aussi dans le **menu** : bouton ☰ du panneau, clic droit sur le panneau, ou icône près de l'horloge. Le menu ouvre aussi le guide `LISEZ-MOI.html` : **Guide d'utilisation**.
 
 ## Couleurs
 
@@ -125,7 +142,14 @@ Les couleurs proposées sont ajustées toutes seules pour rester bien lisibles, 
 
 ## Réglages
 
-La plupart des réglages se font avec les touches ci-dessus, et Turbo X s'en souvient. Pour aller plus loin avec le code source, ils sont tous en haut de `src/TurboX.ahk` :
+La plupart des réglages se font avec les touches ci-dessus ou dans le menu, et Turbo X s'en souvient. Dans le menu :
+
+- **Sons** : petits bips au démarrage et à l'arrêt.
+- **Vérifier la connexion à la PS5** : coché au départ, Turbo X n'appuie que si chiaki-ng est connecté à ta PS5. Décoche-le seulement si tu joues par Internet (voir [Dépannage](#dépannage)).
+
+<!-- hors-guide -->
+
+Avec le code source, tous les réglages sont en haut de `src/TurboX.ahk` :
 
 | Réglage | Par défaut | Rôle |
 | --- | --- | --- |
@@ -135,8 +159,8 @@ La plupart des réglages se font avec les touches ci-dessus, et Turbo X s'en sou
 | `PAS_MS` | `50` | ce que change chaque appui sur <kbd>F9</kbd> ou <kbd>F10</kbd> |
 | `APPUI_MS` | `60` | durée de chaque appui |
 | `CIBLE` | `chiaki` | nom du programme dans lequel appuyer |
-| `VERIF_PS5` | `true` | n'appuyer que si chiaki-ng est connecté à la PS5 (`false` si tu joues par Internet) |
-| `SONS` | `true` | petits bips au démarrage et à l'arrêt |
+| `VERIF_PS5` | `true` | n'appuyer que si chiaki-ng est connecté à la PS5 (`false` si tu joues par Internet ; aussi dans le menu) |
+| `SONS` | `true` | petits bips au démarrage et à l'arrêt (aussi dans le menu) |
 | `COIN` | `1` | coin du panneau : 1 haut-gauche, 2 haut-droite, 3 bas-droite, 4 bas-gauche |
 | `ECRAN` | `0` | écran du panneau : 0 = celui du jeu, 1 = le plus à gauche, 2 = le suivant… |
 | `OUVRIR_CHIAKI` | `true` | ouvrir chiaki-ng au lancement |
@@ -145,11 +169,13 @@ La plupart des réglages se font avec les touches ci-dessus, et Turbo X s'en sou
 | `ACCENT` | `ivoire` | couleur de départ des titres et des boutons : `ivoire`, `glacier`, `cobalt`, `rose`, ou un code couleur |
 | `ETATS` | `classique` | couleurs de départ des états : `classique`, `daltonisme`, ou trois codes `actif,pause,arrêté` |
 
-Ce que Turbo X retient (cadence, coin, écran, sons, couleurs) est rangé dans `%APPDATA%\Turbo X\memoire.ini`. Pour tout remettre comme au départ : menu ☰ › **Remettre les réglages d'origine**.
+<!-- /hors-guide -->
+
+Ce que Turbo X retient (cadence, coin, écran, sons, vérification de la PS5, couleurs) est rangé dans `%APPDATA%\Turbo X\memoire.ini`. Pour tout remettre comme au départ : menu ☰ › **Remettre les réglages d'origine**.
 
 ## Sécurité
 
-- Turbo X n'envoie **rien** si la fenêtre au premier plan n'est pas chiaki-ng, ou si chiaki-ng n'est pas connecté à ta PS5. Il ne peut donc pas appuyer par erreur dans une autre fenêtre, ni dans les menus de chiaki-ng.
+- Turbo X n'envoie **rien** si la fenêtre au premier plan n'est pas chiaki-ng, ou si chiaki-ng n'est pas connecté à ta PS5 (tant que **Vérifier la connexion à la PS5** reste coché dans le menu). Il ne peut donc pas appuyer par erreur dans une autre fenêtre, ni dans les menus de chiaki-ng.
 - La touche est toujours relâchée quand Turbo X se ferme.
 - Ses fenêtres (panneau, notifications, assistant) ne prennent jamais le clavier à chiaki-ng.
 - Une seule copie de Turbo X tourne à la fois.
@@ -169,19 +195,19 @@ Le fichier `SHA256SUMS.txt` de chaque version donne aussi l'empreinte de chaque 
 
 **Le panneau reste « EN PAUSE ».** Lis la phrase sous « EN PAUSE » : elle dit quoi faire. Le plus souvent, il suffit de cliquer dans la fenêtre chiaki-ng.
 
-**C'est « ACTIF », mais rien ne se passe dans le jeu.** Dans chiaki-ng, ouvre les réglages, onglet **Keys**, et vérifie que ✕ (*Cross*) correspond à la touche Entrée (*Return*). Sinon, change `TOUCHE` en haut du script.
+**C'est « ACTIF », mais rien ne se passe dans le jeu.** Dans chiaki-ng, ouvre les réglages, onglet **Keys**, et vérifie que ✕ (*Cross*) correspond à la touche Entrée (*Return*). Avec le code source, tu peux aussi changer `TOUCHE` en haut du script.
 
 **L'assistant dit « introuvable » pour la PS5.** Vérifie qu'elle est allumée (ou en mode repos) et reliée à la même box que le PC. Si le pare-feu de Windows demande l'autorisation pour Turbo X, accepte. Un VPN peut gêner la recherche : Turbo X essaie quand même chaque connexion du PC.
 
-**chiaki-ng ne se connecte pas tout seul.** Clique sur ta PS5 dans chiaki-ng. Pour que Turbo X ne tente plus de connexion directe, mets `CONNEXION_AUTO := false`.
+**chiaki-ng ne se connecte pas tout seul.** Clique sur ta PS5 dans chiaki-ng. Avec le code source, `CONNEXION_AUTO := false` empêche Turbo X de tenter une connexion directe.
 
-**Je joue à distance, par Internet.** Mets `VERIF_PS5 := false` : dans ce cas, Turbo X ne peut pas vérifier la connexion à la PS5.
+**Je joue à distance, par Internet.** Dans ce cas, Turbo X ne peut pas vérifier la connexion à la PS5 : dans le menu, décoche **Vérifier la connexion à la PS5**. Turbo X appuie alors dès que la fenêtre chiaki-ng est au premier plan, alors arrête-le (<kbd>F8</kbd>) avant d'aller dans les menus de chiaki-ng.
 
 **Windows ou l'antivirus bloque `TurboX.exe`.** Voir la note de la partie [Installation](#installation). Les programmes AutoHotkey transformés en `.exe` sont parfois signalés à tort ; le code est ouvert, et chaque fichier publié est attesté.
 
 **Je ne trouve pas l'icône près de l'horloge.** Windows 11 la cache : clique sur la petite flèche **^** à gauche de l'horloge. Pour qu'elle reste toujours visible, fais-la glisser de là jusqu'à côté de l'horloge (ou **Paramètres › Personnalisation › Barre des tâches › Autres icônes de la barre d'état système**, puis active Turbo X). Pour le menu, le plus simple reste le bouton ☰ ou le clic droit sur le panneau.
 
-**Je veux revoir la visite guidée.** Menu ☰ › **Visite guidée**. Elle ne s'ouvre toute seule qu'au tout premier lancement.
+**Je veux revoir la visite guidée.** Menu ☰ › **Visite guidée**. Elle ne s'ouvre toute seule qu'au tout premier lancement. Le guide complet, lui, est dans menu ☰ › **Guide d'utilisation**.
 
 **Mes couleurs ne me plaisent plus.** Palette du panneau › **Remettre les couleurs d'origine**.
 
@@ -197,9 +223,13 @@ Le fichier `SHA256SUMS.txt` de chaque version donne aussi l'empreinte de chaque 
 
 **Turbo X lit-il mes identifiants ?** Non. Dans les réglages de chiaki-ng, il lit seulement le nom de tes consoles jumelées, jamais les clés d'association ni ton compte.
 
+<!-- hors-guide -->
+
 ## Contribuer
 
 Les idées et les corrections sont les bienvenues ! Lis le [guide de contribution](CONTRIBUTING.md) et le [code de conduite](CODE_OF_CONDUCT.md). Pour une question, passe par les [discussions](https://github.com/LASCAMPIA67/turbo-x/discussions). Les changements de chaque version sont dans le [journal des modifications](CHANGELOG.md).
+
+<!-- /hors-guide -->
 
 ## Licence et avertissement
 

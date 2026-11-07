@@ -32,8 +32,9 @@ $($partie.Groups[1].Value.Trim())
 
 ## Installation
 
-1. Télécharge **TurboX-$Version.zip** ci-dessous et décompresse-le où tu veux.
-2. Double-clique sur **TurboX.exe** : l'assistant de démarrage te guide pas à pas.
+1. Télécharge **TurboX-$Version.zip** ci-dessous, puis décompresse-le où tu veux (clic droit sur le fichier, **Extraire tout**).
+2. Double-clique sur **TurboX.exe** : la visite guidée, puis l'assistant de démarrage, te guident pas à pas.
+3. Le guide complet, **LISEZ-MOI.html**, est rangé juste à côté : il se lit même sans Internet.
 
 Si Windows affiche « Windows a protégé votre ordinateur », clique sur **Informations complémentaires**, puis sur **Exécuter quand même** : Turbo X n'est pas signé (un certificat de signature est payant).
 
